@@ -15,7 +15,7 @@
 .login-title {
   color: #000000; /* Matched to image */
   font-size: 1.75rem;
-  font-weight: bold;
+  font-weight: bolder;
   margin-bottom: 0.5rem;
 }
 
@@ -27,6 +27,13 @@
 
 .error-message {
   color: #dc3545;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.success-message {
+  color: #3f8747;
   margin-bottom: 1rem;
   text-align: center;
   font-size: 0.9rem;

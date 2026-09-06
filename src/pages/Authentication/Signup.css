@@ -1,0 +1,98 @@
+.signup-wrapper {
+  direction: rtl;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  color: #252b25;
+}
+
+.signup-header {
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.signup-title {
+  margin: 0 0 0.35rem;
+  color: #1d271c;
+   font-size: 1.75rem;
+  font-weight: bolder;
+}
+
+.signup-subtitle {
+  margin: 0;
+  color: #858985;
+  font-size: 0.72rem;
+  font-weight: bold;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+}
+
+.signup-wrapper .success-message {
+  margin-bottom: 0.75rem;
+  color: #3f8747;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.signup-form > div[style] {
+  margin-bottom: 0.1rem !important;
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+  display: flex;
+  padding: 2px;
+  border: 0;
+  background: transparent;
+  color: #929892;
+  cursor: pointer;
+}
+
+.password-toggle svg {
+  pointer-events: none;
+}
+
+.signup-links {
+  display: flex;
+  justify-content: space-between;
+  margin: 0.25rem 0 0;
+  font-size: 0.7rem;
+  font-weight: bold;
+}
+
+.signup-links a,
+.login-prompt a {
+  color: #579557;
+  font-weight: bolder;
+  text-decoration: none;
+}
+
+.signup-links a:hover,
+.login-prompt a:hover {
+  text-decoration: underline;
+}
+
+.login-prompt {
+  margin: 0.7rem 0 0;
+  color: #888d88;
+  font-size: 0.76rem;
+  text-align: center;
+  font-weight: bolder;
+}
+
+@media (max-width: 768px) {
+  .signup-wrapper {
+    max-width: 440px;
+  }
+}

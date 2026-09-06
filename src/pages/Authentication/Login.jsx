@@ -1,19 +1,18 @@
 // src/pages/Login.jsx
 import React, { useState, useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { FiUser, FiEyeOff, FiLock } from 'react-icons/fi'; // Swapped FiLock for FiEyeOff to match image
+import { FiUser, FiLock } from 'react-icons/fi'; 
 import { FcGoogle } from 'react-icons/fc';
-import { FaFacebook } from 'react-icons/fa';
-import InputField from '../../components/InputField'
-import Button from '../../components/Button'
+import InputField from '../../components/InputField';
+import Button from '../../components/Button';
 import api from '../../services/api';
 import { AuthContext } from '../../context/AuthContext';
 import AuthLayout from '../../components/AuthLayout';
 import LogoImage from '../../assets/logo.jpeg';
-import './Login.css'; // Import the new CSS file
+import './Login.css'; 
 
 const schema = yup.object().shape({
   identifier: yup
@@ -28,7 +27,9 @@ const schema = yup.object().shape({
 const Login = () => {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
   const [apiError, setApiError] = useState('');
+  const [apiMessage, setApiMessage] = useState(location.state?.message || '');
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -42,14 +43,27 @@ const Login = () => {
   const onSubmit = async (data) => {
     setIsLoading(true);
     setApiError('');
+    setApiMessage('');
 
     try {
       const response = await api.post('/User/login', {
         identifier: data.identifier,
         password: data.password,
       });
+      const result = response.data;
 
-      login(response.data.token);
+      if (result.success === false) {
+        setApiError(result.message || 'فشل تسجيل الدخول. يرجى التحقق من بياناتك.');
+        return;
+      }
+
+      const token = result.token || result.data?.token || result.result?.token;
+      if (!token) {
+        setApiError(result.message || 'تعذر تسجيل الدخول. لم يتم استلام رمز المصادقة.');
+        return;
+      }
+
+      login(token);
       navigate('/dashboard'); 
     } catch (error) {
       setApiError(
@@ -59,20 +73,16 @@ const Login = () => {
       setIsLoading(false);
     }
   };
-const handleGoogleLogin = () => {
-  const loginUrl = new URL('https://sirajgives.runasp.net/api/ExternalLogin/external-login');
-  
-  loginUrl.searchParams.append('provider', 'Google');
-  
-  loginUrl.searchParams.append('returnUrl', `${window.location.origin}/dashboard`);
 
-  window.location.href = loginUrl.toString();
-};
+  const handleGoogleLogin = () => {
+    const loginUrl = new URL('https://sirajgives.runasp.net/api/ExternalLogin/external-login');
+    loginUrl.searchParams.append('provider', 'Google');
+    loginUrl.searchParams.append('returnUrl', `${window.location.origin}/dashboard`);
+    window.location.href = loginUrl.toString();
+  };
+
   return (
-    <AuthLayout 
-      imageSrc={LogoImage} 
-     
-    >
+    <AuthLayout imageSrc={LogoImage}>
       <div className="login-wrapper">
         <div className="login-header">
           <h2 className="login-title">مرحباً بعودتك</h2>
@@ -85,9 +95,14 @@ const handleGoogleLogin = () => {
           </div>
         )}
 
+        {apiMessage && (
+          <div className="success-message">
+            {apiMessage}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit(onSubmit)} className="login-form">
-          
-       <InputField
+          <InputField
             icon={FiUser}
             type="text"
             placeholder="البريد الإلكتروني أو اسم المستخدم"
@@ -105,7 +120,11 @@ const handleGoogleLogin = () => {
 
           <div className="form-options">
             <label className="remember-me">
-              <input type="checkbox" {...register('rememberMe')} className="custom-checkbox"/>
+              <input 
+                type="checkbox" 
+                {...register('rememberMe')} 
+                className="custom-checkbox"
+              />
               تذكرني
             </label>
             <Link to="/forgot-password" className="forgot-password">
@@ -113,7 +132,7 @@ const handleGoogleLogin = () => {
             </Link>
           </div>
 
-         <Button type="submit" isLoading={isLoading}>
+          <Button type="submit" isLoading={isLoading}>
             تسجيل الدخول
           </Button>
         </form>

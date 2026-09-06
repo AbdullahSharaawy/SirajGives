@@ -13,6 +13,7 @@ const InputField = ({ icon: Icon, type = 'text', placeholder, register, error })
         type={type}
         placeholder={placeholder}
         className="custom-input"
+        aria-invalid={Boolean(error)}
         {...register} // Spread the react-hook-form props here
         style={{
           width: '100%',

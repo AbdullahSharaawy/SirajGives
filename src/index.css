@@ -72,6 +72,34 @@ p {
   font-weight: bold;
   color: #a0a0a0; /* Optional: adjust the color if the bold text looks too dark */
 }
+
+.custom-input,
+.custom-input:focus,
+.custom-input:active,
+.custom-input:valid,
+.custom-input:invalid {
+  color: #4a4a4a;
+  background-color: #fff !important;
+  font: inherit;
+  outline: none;
+  box-shadow: none;
+}
+
+.custom-input:focus,
+.custom-input:active,
+.custom-input:valid,
+.custom-input:invalid {
+  border-color: #ccc;
+}
+
+.custom-input:-webkit-autofill,
+.custom-input:-webkit-autofill:hover,
+.custom-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #4a4a4a;
+  -webkit-box-shadow: 0 0 0 1000px #fff inset;
+  box-shadow: 0 0 0 1000px #fff inset;
+  transition: background-color 9999s ease-out 0s;
+}
 .custom-checkbox {
   accent-color: #569b59; /* Changes the active check color to your specific green */
   width: 16px;           /* Optional: slightly increase the size */
