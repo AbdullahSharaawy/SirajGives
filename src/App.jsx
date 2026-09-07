@@ -5,6 +5,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Authentication/Login';
 import Signup from './pages/Authentication/Signup';
 import VerifyEmail from './pages/Authentication/VerifyEmail';
+import ForgotPassword from './pages/Authentication/ForgotPassword';
+import ResetPassword from './pages/Authentication/ResetPassword';
 import Dashboard from './pages/Dashboard';
 
 function App() {
@@ -17,6 +19,8 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/verify-email" element={<VerifyEmail />} />
           <Route path="/email-verified" element={<VerifyEmail verified />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           
           {/* Private Routes */}
           <Route 

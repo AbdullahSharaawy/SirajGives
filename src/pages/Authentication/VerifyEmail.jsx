@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { FiArrowLeft, FiCheck, FiMail, FiRefreshCw } from 'react-icons/fi';
-import axios from 'axios';
 import AuthLayout from '../../components/AuthLayout';
+import api from '../../services/api';
 import config from '../../config';
 import LogoImage from '../../assets/logo.jpeg';
 import './VerifyEmail.css';
@@ -26,15 +26,11 @@ const VerifyEmail = ({ verified = false }) => {
 		setIsResent(false);
 
 		try {
-			// Update the URL to match your backend's routing (e.g., add your base URL)
-		  const response=	await axios.post(
-				'/api/User/resend-confirmation', 
-				{
-					email:email,
-					returnUrl: `${config.baseUrl}/verify-email`
-				}
-			);
-            console.log(response);
+			const response = await api.post('/User/resend-confirmation', {
+				email: email,
+				returnUrl: `${config.baseUrl}/verify-email`
+			});
+			console.log(response);
 			setIsResent(true);
 		} catch (err) {
 			// Axios encapsulates the response inside err.response
