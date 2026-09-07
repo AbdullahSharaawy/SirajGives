@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Authentication/Login';
 import Signup from './pages/Authentication/Signup';
+import VerifyEmail from './pages/Authentication/VerifyEmail';
 import Dashboard from './pages/Dashboard';
 
 function App() {
@@ -14,6 +15,8 @@ function App() {
           {/* Public Routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
+          <Route path="/email-verified" element={<VerifyEmail verified />} />
           
           {/* Private Routes */}
           <Route 

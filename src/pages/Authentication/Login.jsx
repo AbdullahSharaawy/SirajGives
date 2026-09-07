@@ -46,18 +46,19 @@ const Login = () => {
     setApiMessage('');
 
     try {
+      console.log(data);
       const response = await api.post('/User/login', {
-        identifier: data.identifier,
+        userName: data.identifier,
         password: data.password,
       });
       const result = response.data;
-
+      console.log(result.data);
       if (result.success === false) {
         setApiError(result.message || 'فشل تسجيل الدخول. يرجى التحقق من بياناتك.');
         return;
       }
 
-      const token = result.token || result.data?.token || result.result?.token;
+      const token = result.data ;
       if (!token) {
         setApiError(result.message || 'تعذر تسجيل الدخول. لم يتم استلام رمز المصادقة.');
         return;

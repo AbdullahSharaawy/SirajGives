@@ -1,0 +1,138 @@
+.verification-page {
+  width: 100%;
+  max-width: 430px;
+  color: #2c392c;
+  text-align: center;
+}
+
+.verification-logo {
+  display: block;
+  width: 145px;
+  height: 82px;
+  margin: 0 auto 1.4rem;
+  object-fit: cover;
+  object-position: center;
+}
+
+.verification-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 92px;
+  height: 92px;
+  margin: 0 auto 1.35rem;
+  border-radius: 50%;
+  color: #fff;
+}
+
+.verification-icon svg {
+  width: 50px;
+  height: 50px;
+  stroke-width: 1.6;
+}
+
+.verification-icon--mail {
+  background: #dcebd8;
+  color: #548c58;
+}
+
+.verification-icon--mail > svg {
+  width: 56px;
+  height: 56px;
+  fill: #8fba8e;
+  stroke: #477d4c;
+}
+
+.verification-icon--mail span {
+  position: absolute;
+  right: -3px;
+  bottom: -2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: #d5a557;
+  color: #fff;
+}
+
+.verification-icon--mail span svg {
+  width: 15px;
+  height: 15px;
+  stroke-width: 3;
+}
+
+.verification-icon--success {
+  background: #5da05e;
+}
+
+.verification-page h1 {
+  margin-bottom: 0.65rem;
+  color: #2e3d2e;
+  font-size: 1.45rem;
+  font-weight: 700;
+}
+
+.verification-page p {
+  max-width: 330px;
+  margin: 0 auto 0.2rem;
+  color: #777d77;
+  font-size: 0.85rem;
+  line-height: 1.8;
+}
+
+.verification-email {
+  display: block;
+  margin-bottom: 1.15rem;
+  color: #4c874f;
+  font-size: 0.85rem;
+  direction: ltr;
+}
+
+.verification-primary-action,
+.verification-secondary-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 42px;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.verification-primary-action {
+  gap: 0.4rem;
+  border: 1px solid #5b955b;
+  background: #5b955b;
+  color: #fff;
+}
+
+.verification-button {
+  margin-bottom: 0.7rem;
+}
+
+.verification-secondary-action {
+  gap: 0.35rem;
+  border: 1px solid #b9c5b9;
+  color: #718071;
+}
+
+.verification-note,
+.verification-resend-message {
+  margin: 0 0 0.75rem !important;
+  color: #5b955b !important;
+  font-size: 0.75rem !important;
+}
+
+@media (max-width: 768px) {
+  .verification-page {
+    max-width: 360px;
+  }
+}

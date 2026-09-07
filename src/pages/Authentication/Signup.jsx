@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -15,6 +15,7 @@ import InputField from '../../components/InputField';
 import Button from '../../components/Button';
 import AuthLayout from '../../components/AuthLayout';
 import api from '../../services/api';
+import config from '../../config';
 import PlantHandsImage from '../../assets/logo.jpeg';
 import './Signup.css';
 
@@ -48,7 +49,7 @@ const Signup = () => {
 		setApiError('');
 
 		try {
-			const response = await api.post('/User/register', {
+			const result = await api.post('/User/register', {
 				fullName: data.fullName,
 				username: data.username,
 				email: data.email,
@@ -56,17 +57,18 @@ const Signup = () => {
 				address: data.address,
 				password: data.password,
 				confirmPassword: data.confirmPassword,
+				returnUrl: `${config.baseUrl}/verify-email`
 			});
-			const result = response.data;
-			const success = result.success ;
-			const message = result.message ;
-
+			console.log(result);
+			const success = result.data.success ;
+			const message = result.data.data || result.data.message;
+        
 			if (success === false) {
 				setApiError(message || 'تعذر إنشاء الحساب. يرجى المحاولة مرة أخرى.');
 				return;
 			}
 
-			navigate('/login', { state: { message: message || 'تم إنشاء الحساب بنجاح.' } });
+			navigate('/verify-email', { state: { email: data.email, message } });
 		} catch (error) {
 			setApiError(error.response?.data?.message || 'تعذر إنشاء الحساب. يرجى المحاولة مرة أخرى.');
 		} finally {
