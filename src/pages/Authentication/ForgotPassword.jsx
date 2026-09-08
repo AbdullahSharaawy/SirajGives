@@ -41,7 +41,7 @@ const ForgotPassword = () => {
     try {
       const response = await api.post('/User/forgot-password', {
         email: data.email,
-        returnUrl: `${config.baseUrl}/reset-password`,
+       
       });
 
       const result = response.data;
@@ -55,10 +55,7 @@ const ForgotPassword = () => {
         'تم إرسال رابط استعادة كلمة المرور إلى بريدك الإلكتروني. يرجى التحقق من بريدك والنقر على الرابط لإعادة تعيين كلمة المرور.'
       );
       
-      // Redirect after a short delay
-      setTimeout(() => {
-        navigate('/login');
-      }, 3000);
+     
     } catch (error) {
       setApiError(
         error.response?.data?.message ||

@@ -42,7 +42,7 @@ const ResetPassword = () => {
     hasSpecialChar: false,
   });
 
-  const token = searchParams.get('token');
+  const token = searchParams.get('token') || searchParams.get('encodedToken');
   const email = searchParams.get('email');
 
   const {
@@ -82,7 +82,7 @@ const ResetPassword = () => {
         email: email,
         token: token,
         password: data.password,
-        confirmPassword: data.confirmPassword,
+       
       });
 
       const result = response.data;
