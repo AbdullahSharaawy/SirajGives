@@ -1,0 +1,86 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 42px;
+  padding: 0.75rem 1.25rem;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.btn--full {
+  width: 100%;
+}
+
+.btn--primary {
+  background: #5b955b;
+  color: #fff;
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: #477d4c;
+}
+
+.btn--outline {
+  border-color: #5b955b;
+  background: transparent;
+  color: #477d4c;
+}
+
+.btn--outline:hover:not(:disabled) {
+  background: #eef6ed;
+}
+
+.btn--danger {
+  background: #d9534f;
+  color: #fff;
+}
+
+.btn--ghost {
+  background: transparent;
+  color: #477d4c;
+}
+
+.btn--gold {
+  background: #d5a557;
+  color: #fff;
+}
+
+.btn--sm {
+  min-height: 36px;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.85rem;
+}
+
+.btn--lg {
+  min-height: 48px;
+  padding: 0.85rem 1.5rem;
+  font-size: 1rem;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.spinner {
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-left-color: transparent;
+  border-radius: 50%;
+  animation: button-spin 0.7s linear infinite;
+}
+
+@keyframes button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

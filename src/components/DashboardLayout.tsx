@@ -1,0 +1,58 @@
+import { ReactNode } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import Navbar from "./Navbar";
+import { FiHome, FiTarget, FiPackage, FiSettings, FiDollarSign, FiUsers, FiBarChart2, FiBriefcase } from "react-icons/fi";
+interface SidebarItem { label: string; path: string; icon: ReactNode; section?: string }
+
+export default function DashboardLayout({ children, role }: { children: ReactNode; role: "org" | "admin" }) {
+  const nav = useNavigate();
+  const loc = useLocation();
+
+  const orgItems: SidebarItem[] = [
+    { label: "لوحة التحكم", path: "/org-admin", icon: <FiHome size={15} /> },
+    { label: "إدارة الحملات", path: "/org-admin/campaigns", icon: <FiTarget size={15} />, section: "الحملات" },
+    { label: "العطاء العيني", path: "/org-admin/items", icon: <FiPackage size={15} /> },
+    { label: "التبرعات", path: "/org-admin/donations", icon: <FiDollarSign size={15} />, section: "المالية" },
+    { label: "إعدادات المنظمة", path: "/org-admin/settings", icon: <FiSettings size={15} />, section: "الإعدادات" },
+  ];
+
+  const adminItems: SidebarItem[] = [
+    { label: "نظرة عامة", path: "/admin", icon: <FiHome size={15} /> },
+    { label: "المستخدمون", path: "/admin/users", icon: <FiUsers size={15} />, section: "الإدارة" },
+    { label: "الحملات", path: "/admin/campaigns", icon: <FiTarget size={15} /> },
+    { label: "المنظمات", path: "/admin/organizations", icon: <FiBriefcase size={15} /> },
+    { label: "تقارير التبرعات", path: "/admin/donations", icon: <FiBarChart2 size={15} />, section: "التحليلات" },
+    { label: "العطاء العيني", path: "/admin/items", icon: <FiPackage size={15} /> },
+  ];
+
+  const items = role === "org" ? orgItems : adminItems;
+  let lastSection = "";
+
+  return (
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+      <Navbar />
+      <div className="dashboard-shell">
+        <aside className="sidebar">
+          {items.map((item) => {
+            const showSection = item.section && item.section !== lastSection;
+            if (item.section) lastSection = item.section;
+            const isActive = loc.pathname === item.path;
+            return (
+              <div key={item.path}>
+                {showSection && <div className="sidebar__section">{item.section}</div>}
+                <div
+                  className={`sidebar__item${isActive ? " sidebar__item--active" : ""}`}
+                  onClick={() => nav(item.path)}
+                >
+                  {item.icon}
+                  {item.label}
+                </div>
+              </div>
+            );
+          })}
+        </aside>
+        <main className="main-content">{children}</main>
+      </div>
+    </div>
+  );
+}

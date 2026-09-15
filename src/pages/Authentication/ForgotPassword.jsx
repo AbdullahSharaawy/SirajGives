@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -8,7 +8,6 @@ import InputField from '../../components/InputField';
 import Button from '../../components/Button';
 import AuthLayout from '../../components/AuthLayout';
 import api from '../../services/api';
-import config from '../../config';
 import LogoImage from '../../assets/logo.jpeg';
 import './ForgotPassword.css';
 
@@ -20,7 +19,6 @@ const schema = yup.object().shape({
 });
 
 const ForgotPassword = () => {
-  const navigate = useNavigate();
   const [apiError, setApiError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
@@ -41,8 +39,8 @@ const ForgotPassword = () => {
     try {
       const response = await api.post('/User/forgot-password', {
         email: data.email,
-       
-      });
+        returnUrl: `${window.location.origin}/reset-password`,
+      }, { skipAuthRedirect: true });
 
       const result = response.data;
 

@@ -1,5 +1,5 @@
 // src/pages/Login.jsx
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -13,7 +13,7 @@ import { AuthContext } from '../../context/AuthContext';
 import AuthLayout from '../../components/AuthLayout';
 import LogoImage from '../../assets/logo.jpeg';
 import './Login.css'; 
-
+import config from '../../config';
 const schema = yup.object().shape({
   identifier: yup
     .string()
@@ -46,26 +46,28 @@ const Login = () => {
     setApiMessage('');
 
     try {
-      console.log(data);
       const response = await api.post('/User/login', {
         userName: data.identifier,
         password: data.password,
-      });
+        rememberMe: data.rememberMe,
+      }, { skipAuthRedirect: true });
       const result = response.data;
-      console.log(result.data);
       if (result.success === false) {
         setApiError(result.message || 'فشل تسجيل الدخول. يرجى التحقق من بياناتك.');
         return;
       }
 
-      const token = result.data ;
+      const token = typeof result.data === 'string'
+        ? result.data
+        : result.data?.token ?? result.data?.accessToken;
       if (!token) {
         setApiError(result.message || 'تعذر تسجيل الدخول. لم يتم استلام رمز المصادقة.');
         return;
       }
 
       login(token);
-      navigate('/dashboard'); 
+      const redirectTo = location.state?.from?.pathname || '/';
+      navigate(redirectTo, { replace: true });
     } catch (error) {
       setApiError(
         error.response?.data?.message || 'فشل تسجيل الدخول. يرجى التحقق من بياناتك.'
@@ -76,9 +78,9 @@ const Login = () => {
   };
 
   const handleGoogleLogin = () => {
-    const loginUrl = new URL('https://sirajgives.runasp.net/api/ExternalLogin/external-login');
+    const loginUrl = new URL(`${config.backendUrl}/api/ExternalLogin/external-login`);
     loginUrl.searchParams.append('provider', 'Google');
-    loginUrl.searchParams.append('returnUrl', `${window.location.origin}/dashboard`);
+    loginUrl.searchParams.append('returnUrl', `${window.location.origin}/`);
     window.location.href = loginUrl.toString();
   };
 

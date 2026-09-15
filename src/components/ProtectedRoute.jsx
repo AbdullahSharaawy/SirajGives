@@ -1,37 +1,23 @@
 // src/components/ProtectedRoute.jsx
-import React, { useContext, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Navigate, useSearchParams, useLocation, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext';
 
-const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, loading, login } = useContext(AuthContext);
-  
-  // Hooks to read and manipulate the URL
+const ProtectedRoute = ({ children, role }) => {
+  const { isAuthenticated, isSuperAdmin, isOrgAdmin, loading, login } = useAuth();
   const [searchParams] = useSearchParams();
   const location = useLocation();
   const navigate = useNavigate();
-
-  // Local state to pause the redirect if we spot a token in the URL
-  const [processingToken, setProcessingToken] = useState(!!searchParams.get('token'));
+  const urlToken = searchParams.get('token');
 
   useEffect(() => {
-    const token = searchParams.get('token');
-    
-    if (token) {
-      // 1. Log the user in immediately via Context
-      login(token);
-      
-      // 2. Erase the token from the browser's address bar for security
-      // 'replace: true' prevents the user from hitting the "Back" button and seeing the token again
+    if (urlToken) {
+      login(urlToken);
       navigate(location.pathname, { replace: true }); 
     }
-    
-    // Release the pause state
-    setProcessingToken(false);
-  }, [searchParams, login, navigate, location.pathname]);
+  }, [urlToken, login, navigate, location.pathname]);
 
-  // Show loading screen if Context is initializing OR if we are processing a URL token
-  if (loading || processingToken) {
+  if (loading || urlToken) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
         جاري التحميل...
@@ -39,12 +25,18 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
-  // If there's no active session (and no token was found in the URL), boot them to login
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
-  // Otherwise, render the protected page (like Dashboard)
+  if (role === "superadmin" && !isSuperAdmin) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (role === "orgadmin" && !isOrgAdmin && !isSuperAdmin) {
+    return <Navigate to="/" replace />;
+  }
+
   return children;
 };
 

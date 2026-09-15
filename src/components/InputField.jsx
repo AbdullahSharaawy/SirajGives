@@ -1,6 +1,4 @@
 // src/components/InputField.jsx
-import React from 'react';
-
 const InputField = ({ icon: Icon, type = 'text', placeholder, register, error }) => {
   return (
     <div style={{ position: 'relative', width: '100%', marginBottom: '0.5rem' }}>

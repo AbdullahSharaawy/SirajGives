@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
+import { useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useForm, useWatch } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { FiLock, FiEye, FiEyeOff, FiCheck, FiX } from 'react-icons/fi';
@@ -26,21 +26,24 @@ const schema = yup.object().shape({
     .required('تأكيد كلمة المرور مطلوب'),
 });
 
+const PasswordStrengthCheck = ({ condition, label }) => (
+  <div className="strength-check">
+    {condition ? (
+      <FiCheck className="strength-icon success" />
+    ) : (
+      <FiX className="strength-icon fail" />
+    )}
+    <span className={condition ? 'success' : 'fail'}>{label}</span>
+  </div>
+);
+
 const ResetPassword = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [searchParams] = useSearchParams();
   const [apiError, setApiError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [passwordStrength, setPasswordStrength] = useState({
-    hasMinLength: false,
-    hasUpperCase: false,
-    hasLowerCase: false,
-    hasNumber: false,
-    hasSpecialChar: false,
-  });
 
   const token = searchParams.get('token') || searchParams.get('encodedToken');
   const email = searchParams.get('email');
@@ -49,29 +52,25 @@ const ResetPassword = () => {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
+    control,
   } = useForm({
     resolver: yupResolver(schema),
   });
 
-  const password = watch('password', '');
+  const password = useWatch({ control, name: 'password', defaultValue: '' });
 
-  useEffect(() => {
-    if (!token || !email) {
-      setApiError('رابط غير صالح. يرجى طلب رابط جديد.');
-    }
-  }, [token, email]);
-
-  useEffect(() => {
-    // Update password strength indicators
-    setPasswordStrength({
+  const passwordStrength = {
       hasMinLength: password.length >= 8,
       hasUpperCase: /[A-Z]/.test(password),
       hasLowerCase: /[a-z]/.test(password),
       hasNumber: /\d/.test(password),
       hasSpecialChar: /[@$!%*?&]/.test(password),
-    });
-  }, [password]);
+  };
+
+  const invalidLink = !token || !email;
+  const displayError = invalidLink
+    ? 'رابط غير صالح. يرجى طلب رابط جديد.'
+    : apiError;
 
   const onSubmit = async (data) => {
     setIsLoading(true);
@@ -81,9 +80,11 @@ const ResetPassword = () => {
       const response = await api.post('/User/reset-password', {
         email: email,
         token: token,
+        encodedToken: token,
         password: data.password,
-       
-      });
+        confirmPassword: data.confirmPassword,
+        newPassword: data.password,
+      }, { skipAuthRedirect: true });
 
       const result = response.data;
 
@@ -108,17 +109,6 @@ const ResetPassword = () => {
     }
   };
 
-  const PasswordStrengthCheck = ({ condition, label }) => (
-    <div className="strength-check">
-      {condition ? (
-        <FiCheck className="strength-icon success" />
-      ) : (
-        <FiX className="strength-icon fail" />
-      )}
-      <span className={condition ? 'success' : 'fail'}>{label}</span>
-    </div>
-  );
-
   return (
     <AuthLayout imageSrc={LogoImage}>
       <div className="reset-password-wrapper" dir="rtl">
@@ -129,9 +119,9 @@ const ResetPassword = () => {
           </p>
         </div>
 
-        {apiError && <div className="error-message">{apiError}</div>}
+        {displayError && <div className="error-message">{displayError}</div>}
 
-        {!apiError && (
+        {!invalidLink && (
           <form onSubmit={handleSubmit(onSubmit)} className="reset-password-form">
             <div className="password-input-wrapper">
               <InputField

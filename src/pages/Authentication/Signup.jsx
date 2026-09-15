@@ -51,15 +51,14 @@ const Signup = () => {
 		try {
 			const result = await api.post('/User/register', {
 				fullName: data.fullName,
-				username: data.username,
+				userName: data.username,
 				email: data.email,
 				phoneNumber: data.phoneNumber,
 				address: data.address,
 				password: data.password,
 				confirmPassword: data.confirmPassword,
 				returnUrl: `${config.baseUrl}/verify-email`
-			});
-			console.log(result);
+			}, { skipAuthRedirect: true });
 			const success = result.data.success ;
 			const message = result.data.data || result.data.message;
         
