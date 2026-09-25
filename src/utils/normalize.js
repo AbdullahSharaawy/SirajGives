@@ -57,22 +57,26 @@ export const normalizeOrganization = (organization) => {
 };
 
 export const campaignStatusLabel = (status) => {
-  const labels = {
-    Active: "نشطة",
-    Completed: "منتهية",
-    Expired: "منتهية",
-    Paused: "موقوفة",
-    Suspended: "موقوفة",
-    Cancelled: "موقوفة",
-  };
+ const labels = {
+  Preparing: "تُحضر",
+  Active: "نشطة",
+  Completed: "مكتملة",
+  Dismissed: "مستبعدة",
+  Postponed: "مؤجلة",
+  Expired: "منتهية",
+  
+};
   return labels[status] ?? status;
 };
 
 export const campaignStatusValue = (status) => {
   const values = {
     نشطة: "Active",
-    منتهية: "Completed",
-    موقوفة: "Paused",
+    مكتملة: "Completed",
+    تُحضر:"Preparing",
+ مستبعدة:"Dismissed",
+ مؤجلة:"Postponed",
+ منتهية:"Expired"
   };
   return values[status] ?? status;
 };
