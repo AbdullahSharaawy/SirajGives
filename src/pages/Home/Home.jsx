@@ -12,7 +12,7 @@ const formatNumber = (value) => numberValue(value).toLocaleString("ar-EG");
 export default function Home() {
   const nav = useNavigate();
   const [searchParams] = useSearchParams();
-  const { login, isAuthenticated, isOrgAdmin, isSuperAdmin, loading: authLoading } = useAuth();
+  const { login,loading: authLoading } = useAuth();
   const [data, setData] = useState({ trendingCampaigns: [], urgentCampaigns: [], organizations: [], campaignStats: {}, totalDonations: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -31,11 +31,7 @@ export default function Home() {
     }
   }, [login, nav, searchParams]);
 
-  useEffect(() => {
-    if (!authLoading && isAuthenticated && isOrgAdmin && !isSuperAdmin) {
-      nav("/org-admin", { replace: true });
-    }
-  }, [authLoading, isAuthenticated, isOrgAdmin, isSuperAdmin, nav]);
+  
 
   useEffect(() => {
     getHomeData()
