@@ -24,7 +24,7 @@ export const updateOrganization = (id, payload) => api.put(`/Organization/${id}`
 // Admin & Sub-admins
 export const getOrganizationAdmin = (id) => api.get(`/Organization/${id}/admin`).then(unwrap);
 export const getSubAdmins = (id) => api.get(`/Organization/${id}/sub-admins`).then(unwrap);
-export const addSubAdmin = (orgId, userId) => api.post(`/Organization/${orgId}/sub-admins`, { userId }).then(unwrap);
+export const addSubAdmin = (orgId, userName) => api.post(`/Organization/${orgId}/sub-admins`, { userName }).then(unwrap);
 export const removeSubAdmin = (orgId, userId) => api.delete(`/Organization/${orgId}/sub-admins/${userId}`).then(unwrap);
 export const isUserSubAdmin = (orgId, userId) => api.get(`/Organization/${orgId}/sub-admins/${userId}/check`).then(unwrap);
 
