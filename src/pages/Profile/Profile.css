@@ -1,0 +1,299 @@
+/* src/pages/Profile/Profile.css */
+
+.profile-page {
+  direction: rtl;
+  font-family: 'Cairo', system-ui, sans-serif;
+  color: var(--primary-text);
+}
+
+.profile-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .profile-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Sidebar Nav ── */
+.profile-sidebar {
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.profile-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: transparent;
+  text-align: right;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--muted-text);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.profile-nav-item:hover {
+  background: var(--bg-soft);
+  color: var(--accent-green);
+}
+
+.profile-nav-item--active {
+  background: #eef6ee;
+  color: var(--accent-green);
+  font-weight: 700;
+}
+
+/* ── Profile Header Card ── */
+.profile-hero-card {
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  box-shadow: var(--card-shadow);
+}
+
+.profile-user-summary {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.profile-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--brand-green);
+  flex-shrink: 0;
+}
+
+.profile-names {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profile-fullname {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--heading-text);
+}
+
+.profile-username {
+  font-size: 0.85rem;
+  color: var(--muted-text);
+  font-weight: 600;
+}
+
+.profile-badges-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+/* ── Details Grid ── */
+.profile-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  margin-top: 1.25rem;
+}
+
+@media (max-width: 650px) {
+  .profile-details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.detail-item {
+  background: var(--bg-soft);
+  border: 1px solid var(--border-soft);
+  padding: 1rem 1.15rem;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.detail-item__label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--muted-text);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.detail-item__value {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--heading-text);
+  word-break: break-word;
+}
+
+.detail-item__empty {
+  color: #a0a6a0;
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* ── Password Strength & Form ── */
+.password-mode-tabs {
+  display: flex;
+  background: var(--bg-soft);
+  padding: 4px;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  gap: 4px;
+}
+
+.password-mode-btn {
+  flex: 1;
+  padding: 0.6rem 0.75rem;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--muted-text);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.password-mode-btn--active {
+  background: #fff;
+  color: var(--brand-green);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.password-input-container {
+  position: relative;
+  width: 100%;
+}
+
+.password-visibility-btn {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--muted-text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  padding: 4px;
+}
+
+.password-visibility-btn:hover {
+  color: var(--primary-text);
+}
+
+.profile-strength-box {
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 0.75rem 0;
+}
+
+.profile-strength-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--heading-text);
+  margin-bottom: 0.65rem;
+}
+
+.profile-strength-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.profile-strength-row.success {
+  color: #2e7d32;
+}
+
+.profile-strength-row.fail {
+  color: #c62828;
+}
+
+/* ── Donation History Stats & Table ── */
+.donation-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 650px) {
+  .donation-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.donation-stat-box {
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.donation-stat-box__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted-text);
+}
+
+.donation-stat-box__val {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--brand-green);
+}
+
+.donation-stat-box__sub {
+  font-size: 0.7rem;
+  color: var(--muted-text);
+}
+
+.donations-search-bar {
+  margin-bottom: 1rem;
+  max-width: 320px;
+}
