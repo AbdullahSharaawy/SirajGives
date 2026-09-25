@@ -12,7 +12,7 @@ import AdminUsers from './pages/SuperAdmin/AdminUsers';
 import AdminCampaigns from './pages/SuperAdmin/AdminCampaigns';
 import AdminOrganizations from './pages/SuperAdmin/AdminOrganizations';
 import AdminDonations from './pages/SuperAdmin/AdminDonations';
-import AdminItems from './pages/SuperAdmin/AdminItems';
+
 import Home from './pages/Home/Home';
 import Campaigns from './pages/Campaigns/Campaigns';
 import CampaignDetails from './pages/Campaigns/CampaignDetails';
@@ -23,7 +23,7 @@ import Profile from './pages/Profile/Profile';
 import OrgDashboard from './pages/OrgAdmin/OrgDashboard';
 import OrgCampaigns from './pages/OrgAdmin/OrgCampaigns';
 import OrgDonations from './pages/OrgAdmin/OrgDonations';
-import OrgItems from './pages/OrgAdmin/OrgItems';
+
 import OrgSettings from './pages/OrgAdmin/OrgSettings';
 
 function App() {
@@ -51,7 +51,7 @@ function App() {
           <Route path="/org-admin" element={<ProtectedRoute role="orgadmin"><OrgDashboard /></ProtectedRoute>} />
           <Route path="/org-admin/campaigns" element={<ProtectedRoute role="orgadmin"><OrgCampaigns /></ProtectedRoute>} />
           <Route path="/org-admin/donations" element={<ProtectedRoute role="orgadmin"><OrgDonations /></ProtectedRoute>} />
-          <Route path="/org-admin/items" element={<ProtectedRoute role="orgadmin"><OrgItems /></ProtectedRoute>} />
+        
           <Route path="/org-admin/settings" element={<ProtectedRoute role="orgadmin"><OrgSettings /></ProtectedRoute>} />
 
           {/* SuperAdmin Routes */}
@@ -60,7 +60,7 @@ function App() {
           <Route path="/admin/campaigns" element={<ProtectedRoute role="superadmin"><AdminCampaigns /></ProtectedRoute>} />
           <Route path="/admin/organizations" element={<ProtectedRoute role="superadmin"><AdminOrganizations /></ProtectedRoute>} />
           <Route path="/admin/donations" element={<ProtectedRoute role="superadmin"><AdminDonations /></ProtectedRoute>} />
-          <Route path="/admin/items" element={<ProtectedRoute role="superadmin"><AdminItems /></ProtectedRoute>} />
+    
         </Routes>
       </BrowserRouter>
     </AuthProvider>
