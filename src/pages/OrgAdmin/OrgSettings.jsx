@@ -80,7 +80,7 @@ export default function OrgSettings() {
   // Tab 4: Sub-admins State
   const [subAdmins, setSubAdmins] = useState([]);
   const [showAddSubAdminModal, setShowAddSubAdminModal] = useState(false);
-  const [subAdminUserId, setSubAdminUserId] = useState("");
+  const [subAdminUserName, setSubAdminUserName] = useState("");
   const [availableUsers, setAvailableUsers] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
 
@@ -294,7 +294,7 @@ export default function OrgSettings() {
   // Open Add Sub-Admin Modal
   const openAddSubAdminModal = async () => {
     setShowAddSubAdminModal(true);
-    setSubAdminUserId("");
+    setSubAdminUserName("");
     setLoadingUsers(true);
     try {
       const usersList = await getUsers(false);
@@ -309,13 +309,13 @@ export default function OrgSettings() {
   // Handle Add Sub-Admin
   const handleAddSubAdmin = async (e) => {
     e.preventDefault();
-    if (!orgId || !subAdminUserId.trim()) return;
+    if (!orgId || !subAdminUserName.trim()) return;
 
     setSaving(true);
     setError("");
 
     try {
-      await addSubAdmin(orgId, subAdminUserId.trim());
+      await addSubAdmin(orgId, subAdminUserName.trim());
       setShowAddSubAdminModal(false);
       setMsg("تمت إضافة المساعد الإداري بنجاح.");
       setTimeout(() => setMsg(""), 3500);
@@ -706,8 +706,8 @@ export default function OrgSettings() {
                 ) : availableUsers.length > 0 ? (
                   <select
                     className="field-select"
-                    value={subAdminUserId}
-                    onChange={(e) => setSubAdminUserId(e.target.value)}
+                    value={subAdminUserName}
+                    onChange={(e) => setSubAdminUserName(e.target.value)}
                   >
                     <option value="">-- اختر مستخدم --</option>
                     {availableUsers.map((u) => (
@@ -722,12 +722,12 @@ export default function OrgSettings() {
               </div>
 
               <div className="form-group">
-                <label className="field-label">أو أدخل معرف المستخدم (User ID) مباشرة</label>
+                <label className="field-label">أو أدخل معرف المستخدم (الايميل) مباشرة</label>
                 <input
                   className="field-input"
-                  placeholder="مثال: 3fa85f64-5717-4562-b3fc-2c963f66afa6"
-                  value={subAdminUserId}
-                  onChange={(e) => setSubAdminUserId(e.target.value)}
+                  placeholder="مثال: abdallahsharawy@gmail.com"
+                  value={subAdminUserName}
+                  onChange={(e) => setSubAdminUserName(e.target.value)}
                   required
                 />
               </div>
