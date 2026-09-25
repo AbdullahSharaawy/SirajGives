@@ -11,12 +11,30 @@ const asArray = (value) => {
 
 export const getUsers = async (showDeleted = false) => {
   const response = await api.get('/User', { params: { showDeleted } });
+  const users = asArray(unwrap(response));
+  const roleResults = await Promise.allSettled(
+    users.map((user) => getUserRoles(user.id)),
+  );
+
+  return users.map((user, index) => ({
+    ...user,
+    roles: roleResults[index].status === 'fulfilled'
+      ? roleResults[index].value
+      : user.roles || user.userRoles || [],
+  }));
+};
+
+export const getUserRoles = async (userId) => {
+  const response = await api.get(`/User/${userId}/roles`);
   return asArray(unwrap(response));
 };
 
 export const deleteUser = (id) => api.delete(`/User/${id}`);
 
 export const restoreUser = (id) => api.get(`/User/restore/${id}`);
+
+export const assignUserRole = (userId, role) => api.post(`/User/${userId}/roles`, { Role: role });
+export const removeUserRole = (userId, role) => api.delete(`/User/${userId}/roles/${role}`);
 
 export const seedSuperAdmin = () => api.post('/User/seed-superadmin');
 
@@ -30,6 +48,11 @@ export const getDeletedOrganizations = async () => {
   return asArray(unwrap(response));
 };
 
+export const getOrganizationDetails = async (id) => {
+  const response = await api.get(`/Organization/${id}/details`);
+  return unwrap(response);
+};
+
 export const createOrganization = (payload) => api.post('/Organization', payload);
 
 export const updateOrganization = (id, payload) => api.put(`/Organization/${id}`, payload);
@@ -41,11 +64,24 @@ export const restoreOrganization = (id) => api.patch(`/Organization/${id}/restor
 export const assignOrganizationAdmin = (organizationId, userId) =>
   api.post(`/Organization/${organizationId}/admin`, { userId });
 
+export const isUserOrganizationAdmin = ( userId) =>
+  api.get(`/Organization/organization-admins/${userId}/check`);
+
+
 export const getCampaigns = async (includeDeleted = true) => {
   const response = await api.get('/Campaign', { params: { includeDeleted } });
   return asArray(unwrap(response));
 };
 
+export const getDeletedCampaigns = async () => {
+  const response = await api.get('/Campaign/deleted');
+  return asArray(unwrap(response));
+};
+export const getCampaignDetails = async (id) => {
+  const response = await api.get(`/Campaign/${id}/details`);
+  console.log(response);
+  return unwrap(response);
+};
 export const getHomeData = async () => {
   const results = await Promise.allSettled([
     api.get('/Campaign/trending/top-by-achievement', { skipAuthRedirect: true }),
