@@ -54,10 +54,13 @@ const Login = () => {
     resolver: yupResolver(schema),
   });
 
+  const [unconfirmedEmail, setUnconfirmedEmail] = useState('');
+
   const onSubmit = async (data) => {
     setIsLoading(true);
     setApiError('');
     setApiMessage('');
+    setUnconfirmedEmail('');
 
     try {
       const response = await api.post('/User/login', {
@@ -90,9 +93,21 @@ const Login = () => {
         navigate(redirectTo, { replace: true });
       }
     } catch (error) {
-      setApiError(
-        error.response?.data?.message || 'فشل تسجيل الدخول. يرجى التحقق من بياناتك.'
-      );
+      const msg = error.response?.data?.message || '';
+      if (
+        msg.toLowerCase().includes('confirm your email') ||
+        msg.includes('تأكيد') ||
+        error.response?.status === 401 && msg.toLowerCase().includes('email')
+      ) {
+        setApiError('يرجى تأكيد بريدك الإلكتروني قبل تسجيل الدخول.');
+        if (data.identifier.includes('@')) {
+          setUnconfirmedEmail(data.identifier);
+        }
+      } else {
+        setApiError(
+          error.response?.data?.message || 'فشل تسجيل الدخول. يرجى التحقق من بياناتك.'
+        );
+      }
     } finally {
       setIsLoading(false);
     }
@@ -116,6 +131,17 @@ const Login = () => {
         {apiError && (
           <div className="error-message">
             {apiError}
+            {unconfirmedEmail && (
+              <div style={{ marginTop: '0.5rem', fontSize: '0.82rem' }}>
+                <Link
+                  to="/verify-email"
+                  state={{ email: unconfirmedEmail }}
+                  style={{ color: '#2b772b', fontWeight: 'bold', textDecoration: 'underline' }}
+                >
+                  إعادة إرسال رابط تأكيد البريد الإلكتروني
+                </Link>
+              </div>
+            )}
           </div>
         )}
 
