@@ -2,18 +2,18 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { FiArrowLeft, FiHeart, FiUsers, FiTarget, FiTrendingUp } from "react-icons/fi";
 import PageLayout from "../../components/PageLayout";
-import CampaignCard, { Campaign } from "../../components/CampaignCard";
+import CampaignCard from "../../components/CampaignCard";
 import { getHomeData } from "../../services/adminApi";
 import { useAuth } from "../../context/AuthContext";
 import { normalizeCampaign, normalizeOrganization, numberValue } from "../../utils/normalize";
 
-const formatNumber = (value: unknown) => numberValue(value).toLocaleString("ar-EG");
+const formatNumber = (value) => numberValue(value).toLocaleString("ar-EG");
 
 export default function Home() {
   const nav = useNavigate();
   const [searchParams] = useSearchParams();
-  const { login } = useAuth();
-  const [data, setData] = useState<any>({ trendingCampaigns: [], urgentCampaigns: [], organizations: [], campaignStats: {}, totalDonations: 0 });
+  const { login, isAuthenticated, isOrgAdmin, isSuperAdmin, loading: authLoading } = useAuth();
+  const [data, setData] = useState({ trendingCampaigns: [], urgentCampaigns: [], organizations: [], campaignStats: {}, totalDonations: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -21,10 +21,21 @@ export default function Home() {
     const token = searchParams.get("token");
 
     if (token) {
-      login(token);
-      nav(window.location.pathname, { replace: true });
+      login(token).then((authInfo) => {
+        if (authInfo?.isOrgAdmin && !authInfo?.isSuperAdmin) {
+          nav("/org-admin", { replace: true });
+        } else {
+          nav(window.location.pathname, { replace: true });
+        }
+      });
     }
   }, [login, nav, searchParams]);
+
+  useEffect(() => {
+    if (!authLoading && isAuthenticated && isOrgAdmin && !isSuperAdmin) {
+      nav("/org-admin", { replace: true });
+    }
+  }, [authLoading, isAuthenticated, isOrgAdmin, isSuperAdmin, nav]);
 
   useEffect(() => {
     getHomeData()
@@ -36,8 +47,8 @@ export default function Home() {
       .finally(() => setLoading(false));
   }, []);
 
-  const trendingCampaigns = data.trendingCampaigns.map(normalizeCampaign).filter(Boolean) as Campaign[];
-  const urgentCampaigns = data.urgentCampaigns.map(normalizeCampaign).filter(Boolean) as Campaign[];
+  const trendingCampaigns = data.trendingCampaigns.map(normalizeCampaign).filter(Boolean);
+  const urgentCampaigns = data.urgentCampaigns.map(normalizeCampaign).filter(Boolean) ;
   const organizations = data.organizations.map(normalizeOrganization).filter(Boolean);
   const campaignStats = data.campaignStats || {};
   const stats = [
@@ -140,7 +151,7 @@ export default function Home() {
             </button>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "1rem" }}>
-            {loading ? <p>جاري تحميل المنظمات...</p> : organizations.length ? organizations.map((o: any) => (
+            {loading ? <p>جاري تحميل المنظمات...</p> : organizations.length ? organizations.map((o) => (
               <div key={o.id} className="org-card" onClick={() => nav(`/organizations/${o.id}`)}>
                 <div className="org-avatar">
                   {o.imageUrl ? <img src={o.imageUrl} alt={o.name} /> : (o.name ?? "م").charAt(0)}

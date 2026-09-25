@@ -1,20 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import ProgressBar from "./ProgressBar";
 
-export interface Campaign {
-  id: number | string;
-  title: string;
-  organizationName?: string;
-  collectedMoney?: number;
-  targetMoney: number;
-  daysLeft?: number;
-  type?: string;
-  status?: string;
-  imageUrl?: string;
-  isSolo?: boolean;
-}
 
-export default function CampaignCard({ c }: { c: Campaign }) {
+
+export default function CampaignCard({ c }) {
   const nav = useNavigate();
   const kind = c.isSolo ? "solo" : "shared";
   return (

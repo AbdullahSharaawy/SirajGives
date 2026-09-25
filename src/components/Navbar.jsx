@@ -2,7 +2,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { FiMenu, FiUser, FiLogOut, FiLogIn } from "react-icons/fi";
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
-
+import LogoImage from '../assets/logo.png';
 export default function Navbar() {
   const nav = useNavigate();
   const loc = useLocation();
@@ -16,28 +16,35 @@ export default function Navbar() {
    
   ];
 
-  const active = (p: string) =>
+ const active = (p) =>
     loc.pathname === p ? "navbar__link navbar__link--active" : "navbar__link";
 
   return (
     <nav className="navbar">
       <div className="navbar__inner">
         {/* Logo */}
-        <div className="navbar__logo" onClick={() => nav("/")}>
-          <div className="navbar__logo-mark">س</div>
-          <span className="navbar__logo-text">
-            سِ<span>رَاج</span>
-          </span>
+        <div className="navbar__logo" onClick={() => nav(isOrgAdmin && !isSuperAdmin ? "/org-admin" : "/")}>
+          <img src={LogoImage} alt="Siraj Logo" style={{ height: "100px" }} />
         </div>
 
         {/* Links */}
         <div className="navbar__links">
           {links.map((l) => (
-            <span key={l.path} className={active(l.path)} onClick={() => nav(l.path)}>
+            <span
+              key={l.path}
+              className={active(l.path)}
+              onClick={() => {
+                if (l.path === "/" && isOrgAdmin && !isSuperAdmin) {
+                  nav("/org-admin");
+                } else {
+                  nav(l.path);
+                }
+              }}
+            >
               {l.label}
             </span>
           ))}
-          {isOrgAdmin && (
+          {(isOrgAdmin || isSuperAdmin) && (
             <span className={active("/org-admin")} onClick={() => nav("/org-admin")}>
               لوحة المنظمة
             </span>

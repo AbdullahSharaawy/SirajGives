@@ -1,5 +1,5 @@
-interface Props { value: number; max: number; label?: boolean }
-export default function ProgressBar({ value, max, label }: Props) {
+
+export default function ProgressBar({ value, max, label }) {
   const safeValue = Number.isFinite(value) ? value : 0;
   const safeMax = Number.isFinite(max) ? max : 0;
   const pct = safeMax > 0 ? Math.min(100, Math.round((safeValue / safeMax) * 100)) : 0;

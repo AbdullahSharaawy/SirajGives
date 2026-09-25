@@ -4,7 +4,7 @@ import DashboardLayout from "../../components/DashboardLayout";
 import { getAdminOverview } from "../../services/adminApi";
 
 export default function AdminOverview() {
-  const [overview, setOverview] = useState<any>({ users: 0, campaigns: {}, organizations: 0, donations: 0 });
+ const [overview, setOverview] = useState({ users: 0, campaigns: {}, organizations: 0, donations: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 

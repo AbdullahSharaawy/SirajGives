@@ -1,19 +1,21 @@
 import { useEffect, useState } from "react";
-import { FiPlus, FiEdit2, FiTrash2, FiRefreshCw, FiCheckCircle, FiAlertCircle, FiUserPlus } from "react-icons/fi";
+import { FiPlus, FiEdit2, FiTrash2, FiRefreshCw, FiCheckCircle, FiAlertCircle, FiUserPlus, FiEye } from "react-icons/fi";
 import DashboardLayout from "../../components/DashboardLayout";
 import Button from "../../components/Button";
-import { assignOrganizationAdmin, createOrganization, deleteOrganization, getDeletedOrganizations, getOrganizations, getUsers, restoreOrganization, updateOrganization } from "../../services/adminApi";
+import { assignOrganizationAdmin, createOrganization, deleteOrganization, getDeletedOrganizations, getOrganizationDetails, getOrganizations, getUsers, restoreOrganization, updateOrganization } from "../../services/adminApi";
 
 export default function AdminOrganizations() {
-  const [orgs, setOrgs] = useState<any[]>([]);
+  const [orgs, setOrgs] = useState([]);
   const [modal, setModal] = useState(false);
   const [adminModal, setAdminModal] = useState(false);
-  const [adminOrg, setAdminOrg] = useState<any | null>(null);
-  const [users, setUsers] = useState<any[]>([]);
+  const [adminOrg, setAdminOrg] = useState(null);
+  const [detailsOrg, setDetailsOrg] = useState(null);
+  const [detailsLoading, setDetailsLoading] = useState(false);
+  const [users, setUsers] = useState([]);
   const [adminUserId, setAdminUserId] = useState("");
   const [assigning, setAssigning] = useState(false);
   const [showDeleted, setShowDeleted] = useState(false);
-  const [editingOrg, setEditingOrg] = useState<any | null>(null);
+  const [editingOrg, setEditingOrg] = useState(null);
   const [saving, setSaving] = useState(false);
   const [orgName, setOrgName] = useState("");
   const [address, setAddress] = useState("");
@@ -36,7 +38,7 @@ export default function AdminOrganizations() {
     loadOrganizations();
   }, [showDeleted]);
 
-  const openAdminModal = async (organization: any) => {
+  const openAdminModal = async (organization) => {
     setAdminOrg(organization);
     setAdminUserId("");
     setAdminModal(true);
@@ -52,6 +54,22 @@ export default function AdminOrganizations() {
     setAdminOrg(null);
     setAdminUserId("");
   };
+
+  const openDetailsModal = async (organization) => {
+    setDetailsOrg({ ...organization });
+    setDetailsLoading(true);
+    try {
+      const details = await getOrganizationDetails(organization.id);
+      setDetailsOrg(details || organization);
+      console.log(details);
+    } catch {
+      setError("تعذر تحميل تفاصيل المنظمة.");
+    } finally {
+      setDetailsLoading(false);
+    }
+  };
+
+  const closeDetailsModal = () => setDetailsOrg(null);
 
   const handleAssignAdmin = async () => {
     if (!adminOrg || !adminUserId) return;
@@ -75,7 +93,7 @@ export default function AdminOrganizations() {
     setModal(true);
   };
 
-  const openEditModal = (organization: any) => {
+  const openEditModal = (organization) => {
     setEditingOrg(organization);
     setOrgName(organization.name || organization.organizationName || "");
     setAddress(organization.address || "");
@@ -109,11 +127,11 @@ export default function AdminOrganizations() {
     }
   };
 
-  const handleDelete = async (id: string | number) => {
+  const handleDelete = async (id) => {
     try { await deleteOrganization(id); await loadOrganizations(); } catch { setError("تعذر حذف المنظمة."); }
   };
 
-  const handleRestore = async (id: string | number) => {
+  const handleRestore = async (id) => {
     try { await restoreOrganization(id); await loadOrganizations(); } catch { setError("تعذر استعادة المنظمة."); }
   };
 
@@ -197,6 +215,9 @@ export default function AdminOrganizations() {
                         </button>
                       ) : (
                         <>
+                          <button className="btn btn--ghost btn--sm" style={{ padding: "4px 8px" }} onClick={() => openDetailsModal(o)} aria-label={`عرض تفاصيل ${name}`}>
+                            <FiEye size={12} />
+                          </button>
                           <button className="btn btn--ghost btn--sm" style={{ padding: "4px 8px" }} onClick={() => openEditModal(o)} aria-label={`تعديل ${name}`}>
                             <FiEdit2 size={12} />
                           </button>
@@ -265,7 +286,7 @@ export default function AdminOrganizations() {
                   <option value="">اختر مستخدماً</option>
                   {users.filter((user) => !user.deleted && !user.isDeleted).map((user) => (
                     <option key={user.id} value={user.id}>
-                      {user.fullName || user.userName || user.name || user.email || user.id}
+                      {user.FullName || user.userName || user.name || user.email || user.id}
                     </option>
                   ))}
                 </select>
@@ -275,6 +296,57 @@ export default function AdminOrganizations() {
                 <Button size="sm" isLoading={assigning} disabled={!adminUserId} onClick={handleAssignAdmin}>تعيين</Button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {detailsOrg && (
+        <div className="modal-backdrop" onClick={closeDetailsModal}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal__header">
+              <h3 className="modal__title">تفاصيل المنظمة</h3>
+              <button style={{ background: "none", border: "none", cursor: "pointer" }} onClick={closeDetailsModal}>✕</button>
+            </div>
+            {detailsLoading ? <div className="muted">جار تحميل التفاصيل...</div> : (
+              <div style={{ display: "grid", gap: "0.7rem" }}>
+                <div><strong>الاسم:</strong> {detailsOrg.name || detailsOrg.organizationName || "-"}</div>
+                <div><strong>العنوان:</strong> {detailsOrg.address || "-"}</div>
+                <div><strong>الوصف:</strong> {detailsOrg.description || "-"}</div>
+                <div><strong>الحملات المشتركة:</strong> {detailsOrg.sharedCampaignsCount ??  0}</div>
+                 <div><strong >الحملات المنفرده:</strong> {detailsOrg.soloCampaignsCount ??  0}</div>
+                 <div><strong >مجموع الحملات:</strong> {detailsOrg.totalCampaignsCount ??  0}</div>
+                <div><strong>بوابة الدفع:</strong> {detailsOrg.PaymentInfo !=null ? "مفعّلة" : "غير مفعّلة"}</div>
+                <div><strong>مسؤولو المنظمة:</strong>{detailsOrg.users && detailsOrg.users.length > 0 ? (
+              <ul style={{ margin: "5px 0 0 20px", padding: 0 }}>
+                {detailsOrg.users.map((adminUser, index) => (
+                  <li key={adminUser.id || index} style={{ marginBottom: "4px" }}>
+                    <span>{`الاسم: ${adminUser.fullName || adminUser.userName || "-"}`}</span>
+                    <span style={{ margin: "0 8px", color: "var(--muted-text)" }}>•</span>
+                    <span>{`البريد: ${adminUser.email || "-"}`}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              " -" 
+            )}</div>
+                <div>
+            <strong>طرق التواصل:</strong> 
+            {detailsOrg.contactMethods && detailsOrg.contactMethods.length > 0 ? (
+              <ul style={{ margin: "5px 0 0 20px", padding: 0 }}>
+                {detailsOrg.contactMethods.map((method, index) => (
+  <li key={index}>
+    {method.type ? `${method.type}: ${method.value}` : method}
+  </li>
+))}
+              </ul>
+            ) : (
+              " -" 
+            )}
+          </div>
+                <div><strong>تاريخ التحديث:</strong> {detailsOrg.updatedOn ?new Date(detailsOrg.updatedOn).toLocaleDateString("ar-EG")  :  "-"}</div>
+                <div><strong>تاريخ الإنشاء:</strong> {detailsOrg.registrationDate ?new Date(detailsOrg.registrationDate).toLocaleDateString("ar-EG")  :  "-"}</div>
+              </div>
+            )}
           </div>
         </div>
       )}
