@@ -23,7 +23,7 @@ export default function Navbar() {
     <nav className="navbar">
       <div className="navbar__inner">
         {/* Logo */}
-        <div className="navbar__logo" onClick={() => nav(isOrgAdmin && !isSuperAdmin ? "/org-admin" : "/")}>
+        <div className="navbar__logo" onClick={() => nav("/")}>
           <img src={LogoImage} alt="Siraj Logo" style={{ height: "100px" }} />
         </div>
 
@@ -34,11 +34,9 @@ export default function Navbar() {
               key={l.path}
               className={active(l.path)}
               onClick={() => {
-                if (l.path === "/" && isOrgAdmin && !isSuperAdmin) {
-                  nav("/org-admin");
-                } else {
+               
                   nav(l.path);
-                }
+               
               }}
             >
               {l.label}
