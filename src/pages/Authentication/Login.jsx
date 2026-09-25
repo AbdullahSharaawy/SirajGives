@@ -1,5 +1,5 @@
 // src/pages/Login.jsx
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -25,12 +25,26 @@ const schema = yup.object().shape({
 });
 
 const Login = () => {
-  const { login } = useContext(AuthContext);
+  const { login, isAuthenticated, isOrgAdmin, isSuperAdmin, loading } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
   const [apiError, setApiError] = useState('');
   const [apiMessage, setApiMessage] = useState(location.state?.message || '');
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      if (isOrgAdmin && !isSuperAdmin) {
+        const redirectTo = (location.state?.from?.pathname && location.state.from.pathname !== '/')
+          ? location.state.from.pathname
+          : '/org-admin';
+        navigate(redirectTo, { replace: true });
+      } else {
+        const redirectTo = location.state?.from?.pathname || '/';
+        navigate(redirectTo, { replace: true });
+      }
+    }
+  }, [loading, isAuthenticated, isOrgAdmin, isSuperAdmin, navigate, location.state]);
 
   const {
     register,
@@ -65,9 +79,16 @@ const Login = () => {
         return;
       }
 
-      login(token);
-      const redirectTo = location.state?.from?.pathname || '/';
-      navigate(redirectTo, { replace: true });
+      const authInfo = await login(token);
+      if (authInfo?.isOrgAdmin && !authInfo?.isSuperAdmin) {
+        const redirectTo = (location.state?.from?.pathname && location.state.from.pathname !== '/')
+          ? location.state.from.pathname
+          : '/org-admin';
+        navigate(redirectTo, { replace: true });
+      } else {
+        const redirectTo = location.state?.from?.pathname || '/';
+        navigate(redirectTo, { replace: true });
+      }
     } catch (error) {
       setApiError(
         error.response?.data?.message || 'فشل تسجيل الدخول. يرجى التحقق من بياناتك.'
