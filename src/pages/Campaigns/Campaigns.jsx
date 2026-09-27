@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import PageLayout from "../../components/PageLayout";
-import CampaignCard, { Campaign } from "../../components/CampaignCard";
+import CampaignCard from "../../components/CampaignCard";
 import { getCampaigns } from "../../services/campaignApi";
 import { normalizeCampaign } from "../../utils/normalize";
 
 const TABS = ["الكل", "فردية", "مشتركة"];
 
 export default function Campaigns() {
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [campaigns, setCampaigns] = useState([]);
   const [tab, setTab] = useState("الكل");
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
@@ -17,7 +17,7 @@ export default function Campaigns() {
   useEffect(() => {
     getCampaigns({ includeDeleted: false })
       .then((items) => {
-        setCampaigns(items.map(normalizeCampaign).filter(Boolean) as Campaign[]);
+        setCampaigns(items.map(normalizeCampaign).filter(Boolean) );
       })
       .catch(() => setError("تعذر تحميل الحملات."))
       .finally(() => setLoading(false));

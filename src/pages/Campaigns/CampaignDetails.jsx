@@ -13,7 +13,7 @@ export default function CampaignDetails() {
   const { isAuth } = useAuth();
   const [donateAmount, setDonateAmount] = useState("100");
   const [shared, setShared] = useState(false);
-  const [c, setCampaign] = useState<any>(null);
+  const [c, setCampaign] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -22,6 +22,7 @@ export default function CampaignDetails() {
     setLoading(true);
     getCampaign(id)
       .then((campaign) => {
+        console.log(campaign);
         const normalized = normalizeCampaign(campaign);
         if (!normalized) {
           setError("تعذر العثور على الحملة.");
@@ -102,7 +103,7 @@ export default function CampaignDetails() {
             </p>
 
             <div style={{ background: "var(--bg-soft)", borderRadius: 10, padding: "1.25rem", marginBottom: "1.5rem" }}>
-              <ProgressBar value={c.collectedMoney} max={c.targetMoney} label />
+              <ProgressBar value={c.achieved} max={c.target} label />
               <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.85rem", fontSize: "0.78rem", color: "var(--muted-text)" }}>
                 <span style={{ display: "flex", alignItems: "center", gap: 5 }}><FiHeart size={12} /> {Number(c.donors || 0).toLocaleString("ar-EG")} متبرع</span>
                 {c.daysLeft != null && (
@@ -120,7 +121,7 @@ export default function CampaignDetails() {
               <>
                 <h2 className="section-title" style={{ marginBottom: "1rem" }}>آخر التحديثات</h2>
                 <ul className="timeline">
-                  {updates.map((u: any, i: number) => (
+                  {updates.map((u, i) => (
                     <li key={i} className="timeline__item">
                       <div className="timeline__dot" />
                       <div style={{ fontSize: "0.68rem", color: "var(--muted-text)", marginBottom: 2 }}>{u.date ?? u.createdAt ?? ""}</div>
