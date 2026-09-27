@@ -19,7 +19,7 @@ export default function CampaignCard({ c }) {
           <div className="campaign-card__org">{c.organizationName}</div>
         )}
         <div className="campaign-card__title">{c.title}</div>
-        <ProgressBar value={c.collectedMoney ?? 0} max={c.targetMoney} label />
+        <ProgressBar value={c.achieved ?? 0} max={c.target} label />
         <div className="campaign-card__footer">
           <span>
             {c.daysLeft != null
