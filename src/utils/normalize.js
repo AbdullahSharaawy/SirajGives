@@ -13,17 +13,17 @@ export const asArray = (value) => {
 export const normalizeCampaign = (campaign) => {
   if (!campaign) return null;
   const collected = numberValue(
-    campaign.collectedMoney ?? campaign.currentAmount ?? campaign.raisedAmount ?? campaign.collected ?? campaign.totalRaised
+    campaign.achieved
   );
-  const target = numberValue(campaign.targetMoney ?? campaign.targetAmount ?? campaign.goal ?? campaign.target);
-  const type = campaign.type ?? campaign.campaignType;
+  const target = numberValue( campaign.target);
+  const type = campaign.type ;
   const isSolo = campaign.isSolo ?? String(type).toLowerCase() === "solo";
   const organizationId = campaign.organizationId ?? campaign.organization?.id ?? campaign.orgId;
 
   return {
     ...campaign,
-    id: campaign.id ?? campaign.campaignId,
-    title: campaign.title ?? campaign.name ?? "حملة خيرية",
+    id: campaign.id ,
+    title: campaign.title ,
     organizationName: campaign.organizationName ?? campaign.organization?.name ?? campaign.org ?? "",
     organizationId,
     collectedMoney: collected,

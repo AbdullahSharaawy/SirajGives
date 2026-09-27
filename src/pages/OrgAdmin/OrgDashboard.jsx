@@ -119,8 +119,8 @@ export default function OrgDashboard() {
   const stats = [
     {
       label: "حملات نشطة",
-      value: loading ? "..." : activeCampaigns.length,
-      unit: `من إجمالي ${campaigns.length}`,
+      value: loading ? "..." : activeCampaigns.length.toLocaleString("ar-EG"),
+      unit: `من إجمالي ${campaigns.length.toLocaleString("ar-EG")}`,
       icon: <FiTarget />,
       color: "#e8f5e9",
       iconColor: "#3f8747"
