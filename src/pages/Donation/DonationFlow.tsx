@@ -22,6 +22,24 @@ export default function DonationFlow() {
   const QUICK = ["50", "100", "250", "500", "1000", "2000"];
 
   useEffect(() => {
+    const successParam = params.get("success");
+    const amountCents = params.get("amount_cents");
+    const errOccurred = params.get("error_occured");
+
+    if (amountCents) {
+      setAmount(String(Number(amountCents) / 100));
+    }
+
+    if (successParam === "true") {
+      setStep("confirm");
+      setMsg("");
+    } else if (successParam === "false" || errOccurred === "true") {
+      setStep("payment");
+      setMsg("فشلت عملية الدفع أو تم إلغاؤها من قبل بوابة الدفع. يرجى المحاولة مرة أخرى.");
+    }
+  }, [params]);
+
+  useEffect(() => {
     if (!id || organizationId) return;
     getCampaign(id).then((campaign) => {
       const normalized = normalizeCampaign(campaign);
@@ -72,9 +90,13 @@ export default function DonationFlow() {
             </div>
             <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "var(--heading-text)", marginBottom: "0.5rem" }}>شكراً لتبرعك!</h2>
             <p className="muted" style={{ fontSize: "0.85rem", marginBottom: "1.5rem", lineHeight: 1.7 }}>
-              تم استلام طلب تبرعك بمبلغ <strong style={{ color: "var(--brand-green)" }}>{Number(amount).toLocaleString("ar-EG")} ج.م</strong>.
+              تم استلام تبرعك بنجاح بمبلغ <strong style={{ color: "var(--brand-green)" }}>{Number(amount).toLocaleString("ar-EG")} ج.م</strong>.
+              {params.get("id") ? ` (رقم المعاملة: ${params.get("id")})` : ""}
             </p>
-            <Button onClick={() => nav("/campaigns")}>تصفح حملات أخرى</Button>
+            <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center", flexWrap: "wrap" }}>
+              <Button onClick={() => nav("/campaigns")}>تصفح حملات أخرى</Button>
+              <button className="btn btn--outline" onClick={() => nav("/profile")}>سجل تبرعاتي</button>
+            </div>
           </div>
         ) : step === "amount" ? (
           <div className="card" style={{ padding: "1.5rem" }}>
