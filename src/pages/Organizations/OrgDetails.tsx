@@ -79,14 +79,14 @@ export default function OrgDetails() {
           </button>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 260px", gap: "1.5rem" }}>
+        <div className="responsive-org-layout">
           <div>
             <h2 className="section-title" style={{ marginBottom: "0.75rem" }}>عن المنظمة</h2>
             <p style={{ fontSize: "0.88rem", lineHeight: 1.8, color: "var(--primary-text)", marginBottom: "1.75rem" }}>{org.description || "لا توجد نبذة تعريفية متاحة."}</p>
 
             <h2 className="section-title" style={{ marginBottom: "1rem" }}>الحملات النشطة</h2>
             {campaigns.length ? (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "1rem" }}>
+              <div className="responsive-cards-grid">
                 {campaigns.map((c) => <CampaignCard key={c.id} c={c} />)}
               </div>
             ) : (

@@ -446,7 +446,7 @@ export default function OrgDonations() {
             </select>
 
             {/* Search */}
-            <div className="search-bar" style={{ width: 200, marginBottom: 0 }}>
+            <div className="search-bar" style={{ flex: "1 1 180px", maxWidth: 260, marginBottom: 0 }}>
               <input
                 style={{ fontSize: "0.78rem", padding: "4px 8px" }}
                 value={search}

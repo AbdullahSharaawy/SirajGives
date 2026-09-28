@@ -21,24 +21,26 @@ export default function AdminDonations() {
         <h2 className="section-title" style={{ marginBottom: "1.25rem", display: "flex", alignItems: "center", gap: 6 }}>
           <FiBarChart2 color="var(--accent-green)" size={16} /> التبرعات الشهرية
         </h2>
-        <div style={{ display: "flex", alignItems: "flex-end", gap: "1.5rem", height: 140, padding: "0 0.5rem" }}>
-          {stats.trend.map((m, index) => {
-            const amount = Number(m.amount || m.total || m.value || 0);
-            const pct = (amount / max) * 100;
-            return (
-              <div key={m.month} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, flex: 1 }}>
-                <span style={{ fontSize: "0.68rem", color: "var(--muted-text)", fontWeight: 700 }}>
-                  {(amount / 1000000).toFixed(1)}م
-                </span>
-                <div style={{ width: "100%", background: "var(--accent-green)", borderRadius: "4px 4px 0 0", height: `${pct}%`, minHeight: 8, transition: "height 0.3s" }} />
-                <span style={{ fontSize: "0.68rem", color: "var(--muted-text)" }}>{m.month || m.date || index + 1}</span>
-              </div>
-            );
-          })}
+        <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch", paddingBottom: "0.5rem" }}>
+          <div style={{ display: "flex", alignItems: "flex-end", gap: "clamp(0.5rem, 2vw, 1.5rem)", height: 140, padding: "0 0.5rem", minWidth: 320 }}>
+            {stats.trend.map((m, index) => {
+              const amount = Number(m.amount || m.total || m.value || 0);
+              const pct = (amount / max) * 100;
+              return (
+                <div key={m.month} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6, flex: 1, minWidth: 36 }}>
+                  <span style={{ fontSize: "0.68rem", color: "var(--muted-text)", fontWeight: 700 }}>
+                    {(amount / 1000000).toFixed(1)}م
+                  </span>
+                  <div style={{ width: "100%", background: "var(--accent-green)", borderRadius: "4px 4px 0 0", height: `${pct}%`, minHeight: 8, transition: "height 0.3s" }} />
+                  <span style={{ fontSize: "0.68rem", color: "var(--muted-text)" }}>{m.month || m.date || index + 1}</span>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1.25rem" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))", gap: "1rem", marginBottom: "1.25rem" }}>
         {/* Top donors */}
         <div className="card" style={{ padding: "1.1rem" }}>
           <h2 className="section-title" style={{ marginBottom: "0.85rem", display: "flex", alignItems: "center", gap: 6 }}>

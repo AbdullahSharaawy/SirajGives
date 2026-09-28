@@ -78,7 +78,7 @@ export default function DonationFlow() {
               <div style={{ width: 28, height: 28, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.75rem", fontWeight: 700, background: step === s ? "var(--accent-green)" : (["amount","payment","confirm"].indexOf(step) > i ? "var(--brand-green)" : "var(--border)"), color: step === s || ["amount","payment","confirm"].indexOf(step) > i ? "#fff" : "var(--muted-text)", transition: "all 0.2s" }}>
                 {["amount","payment","confirm"].indexOf(step) > i ? <FiCheckCircle size={13} /> : i + 1}
               </div>
-              {i < 2 && <div style={{ width: 40, height: 1, background: ["amount","payment","confirm"].indexOf(step) > i ? "var(--accent-green)" : "var(--border)" }} />}
+              {i < 2 && <div style={{ width: "clamp(20px, 8vw, 40px)", height: 1, background: ["amount","payment","confirm"].indexOf(step) > i ? "var(--accent-green)" : "var(--border)" }} />}
             </div>
           ))}
         </div>
@@ -101,7 +101,7 @@ export default function DonationFlow() {
         ) : step === "amount" ? (
           <div className="card" style={{ padding: "1.5rem" }}>
             <h2 style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--heading-text)", marginBottom: "1.25rem" }}>اختر مبلغ التبرع</h2>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: "1rem" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(90px, 1fr))", gap: 8, marginBottom: "1rem" }}>
               {QUICK.map((q) => (
                 <button key={q} className={`btn btn--sm${amount === q ? " btn--primary" : " btn--ghost"}`} onClick={() => setAmount(q)}>
                   {q} ج.م

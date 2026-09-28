@@ -429,7 +429,7 @@ export default function OrgSettings() {
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
                   <select
                     className="field-select"
-                    style={{ width: 140 }}
+                    style={{ width: "clamp(110px, 28%, 140px)" }}
                     value={newContactType}
                     onChange={(e) => setNewContactType(e.target.value)}
                   >
@@ -442,7 +442,7 @@ export default function OrgSettings() {
 
                   <input
                     className="field-input"
-                    style={{ flex: 1, minWidth: 200 }}
+                    style={{ flex: 1, minWidth: "min(100%, 150px)" }}
                     placeholder="رقم الهاتف أو البريد أو الرابط..."
                     value={newContactValue}
                     onChange={(e) => setNewContactValue(e.target.value)}

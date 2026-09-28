@@ -1,8 +1,6 @@
-
 import { useNavigate, useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
-import { FiHome, FiTarget, FiPackage, FiSettings, FiDollarSign, FiUsers, FiBarChart2, FiBriefcase } from "react-icons/fi";
-
+import { FiHome, FiTarget, FiSettings, FiDollarSign, FiUsers, FiBarChart2, FiBriefcase } from "react-icons/fi";
 
 export default function DashboardLayout({ children, role }) {
   const nav = useNavigate();
@@ -21,7 +19,6 @@ export default function DashboardLayout({ children, role }) {
     { label: "الحملات", path: "/admin/campaigns", icon: <FiTarget size={15} /> },
     { label: "المنظمات", path: "/admin/organizations", icon: <FiBriefcase size={15} /> },
     { label: "تقارير التبرعات", path: "/admin/donations", icon: <FiBarChart2 size={15} />, section: "التحليلات" },
-   
   ];
 
   const items = role === "org" ? orgItems : adminItems;
@@ -30,6 +27,24 @@ export default function DashboardLayout({ children, role }) {
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <Navbar />
+
+      {/* Mobile Horizontal Sub-Navigation for Dashboard */}
+      <nav className="dashboard-mobile-nav" aria-label="تنقل لوحة التحكم السريع">
+        {items.map((item) => {
+          const isActive = loc.pathname === item.path;
+          return (
+            <button
+              key={item.path}
+              className={`dashboard-mobile-nav__item ${isActive ? "dashboard-mobile-nav__item--active" : ""}`}
+              onClick={() => nav(item.path)}
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </button>
+          );
+        })}
+      </nav>
+
       <div className="dashboard-shell">
         <aside className="sidebar">
           {items.map((item) => {
@@ -42,6 +57,8 @@ export default function DashboardLayout({ children, role }) {
                 <div
                   className={`sidebar__item${isActive ? " sidebar__item--active" : ""}`}
                   onClick={() => nav(item.path)}
+                  role="button"
+                  tabIndex={0}
                 >
                   {item.icon}
                   {item.label}

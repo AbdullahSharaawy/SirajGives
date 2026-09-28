@@ -13,21 +13,7 @@ const AuthLayout = ({ children, imageSrc, quote, quoteSubtext }) => {
         </div>
       </div>
 
-      {/* This element will render on the LEFT side */}
-      <div 
-        className="auth-image-section"
-        style={{ backgroundImage: `url(${imageSrc})` }}
-      >
-        {/* Optional overlay to make text more readable if needed */}
-        <div className="auth-image-overlay">
-          {quote && (
-            <div className="auth-quote-box">
-              <p className="auth-quote-text">{quote}</p>
-              {quoteSubtext && <span className="auth-quote-subtext">{quoteSubtext}</span>}
-            </div>
-          )}
-        </div>
-      </div>
+     
     </div>
   );
 };

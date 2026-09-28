@@ -209,7 +209,7 @@ export default function OrgDashboard() {
       )}
 
       {/* Stats Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "1rem", marginBottom: "1.5rem" }}>
+      <div className="responsive-stats-grid" style={{ marginBottom: "1.5rem" }}>
         {stats.map((s) => (
           <div key={s.label} className="stat-card">
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
@@ -223,7 +223,7 @@ export default function OrgDashboard() {
       </div>
 
       {/* Campaigns overview & Quick actions */}
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) 280px", gap: "1rem" }}>
+      <div className="responsive-dashboard-split">
         {/* Campaigns card */}
         <div className="card" style={{ padding: "1.25rem" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1rem" }}>

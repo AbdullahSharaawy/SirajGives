@@ -73,7 +73,7 @@ export default function Campaigns() {
             <div className="empty-state__text">لا توجد حملات مطابقة للبحث</div>
           </div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "1rem" }}>
+          <div className="responsive-cards-grid">
             {filtered.map((c) => <CampaignCard key={c.id} c={c} />)}
           </div>
         )}

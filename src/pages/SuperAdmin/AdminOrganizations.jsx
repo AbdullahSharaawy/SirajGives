@@ -152,7 +152,7 @@ export default function AdminOrganizations() {
       </div>
 
       {/* Payment status summary */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "1rem", marginBottom: "1.25rem" }}>
+      <div className="responsive-stats-grid" style={{ marginBottom: "1.25rem" }}>
         <div className="card" style={{ padding: "1rem" }}>
           <div style={{ fontWeight: 700, fontSize: "0.72rem", color: "var(--muted-text)", marginBottom: 4 }}>مع بوابة دفع</div>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>

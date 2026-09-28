@@ -663,50 +663,52 @@ console.log(rolesList);
                       </button>
                     </div>
                   ) : (
-                    <table className="data-table">
-                      <thead>
-                        <tr>
-                          <th>الحملة</th>
-                          <th>المنظمة</th>
-                          <th>المبلغ</th>
-                          <th>التاريخ</th>
-                          <th>الحالة</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredDonations.map((h, idx) => (
-                          <tr key={h.id || idx}>
-                            <td style={{ fontWeight: 600 }}>
-                              {h.campaignId ? (
-                                <Link to={`/campaigns/solo/${h.campaignId}`} style={{ color: "inherit" }}>
-                                  {h.campaignName ?? h.campaign?.title ?? h.title ?? `حملة #${h.campaignId}`}
-                                </Link>
-                              ) : (
-                                h.campaignName ?? h.campaign?.title ?? h.title ?? "-"
-                              )}
-                            </td>
-                            <td className="muted">{h.organizationName ?? h.organization?.name ?? "-"}</td>
-                            <td style={{ color: "var(--brand-green)", fontWeight: 700 }}>
-                              {Number(h.amount ?? h.donationAmount ?? 0).toLocaleString("ar-EG")} ج.م
-                            </td>
-                            <td className="muted">
-                              {h.createdAt
-                                ? new Date(h.createdAt).toLocaleDateString("ar-EG", {
-                                    year: "numeric",
-                                    month: "short",
-                                    day: "numeric",
-                                  })
-                                : h.date ?? "-"}
-                            </td>
-                            <td>
-                              <span className="badge badge--green">
-                                {h.status ?? "مكتمل بنجاح"}
-                              </span>
-                            </td>
+                    <div className="table-container">
+                      <table className="data-table">
+                        <thead>
+                          <tr>
+                            <th>الحملة</th>
+                            <th>المنظمة</th>
+                            <th>المبلغ</th>
+                            <th>التاريخ</th>
+                            <th>الحالة</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {filteredDonations.map((h, idx) => (
+                            <tr key={h.id || idx}>
+                              <td style={{ fontWeight: 600 }}>
+                                {h.campaignId ? (
+                                  <Link to={`/campaigns/solo/${h.campaignId}`} style={{ color: "inherit" }}>
+                                    {h.campaignName ?? h.campaign?.title ?? h.title ?? `حملة #${h.campaignId}`}
+                                  </Link>
+                                ) : (
+                                  h.campaignName ?? h.campaign?.title ?? h.title ?? "-"
+                                )}
+                              </td>
+                              <td className="muted">{h.organizationName ?? h.organization?.name ?? "-"}</td>
+                              <td style={{ color: "var(--brand-green)", fontWeight: 700 }}>
+                                {Number(h.amount ?? h.donationAmount ?? 0).toLocaleString("ar-EG")} ج.م
+                              </td>
+                              <td className="muted">
+                                {h.createdAt
+                                  ? new Date(h.createdAt).toLocaleDateString("ar-EG", {
+                                      year: "numeric",
+                                      month: "short",
+                                      day: "numeric",
+                                    })
+                                  : h.date ?? "-"}
+                              </td>
+                              <td>
+                                <span className="badge badge--green">
+                                  {h.status ?? "مكتمل بنجاح"}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   )}
                 </div>
               </div>

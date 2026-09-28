@@ -76,16 +76,16 @@ export default function CampaignDetails() {
           <FiArrowRight size={13} /> العودة للحملات
         </button>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: "1.5rem" }}>
+        <div className="responsive-details-layout">
           <div>
             {c.imageUrl ? (
               <img
                 src={c.imageUrl}
                 alt={c.title}
-                style={{ width: "100%", height: 320, objectFit: "cover", borderRadius: 10, marginBottom: "1.25rem", background: "var(--bg-soft)" }}
+                style={{ width: "100%", height: "clamp(200px, 45vw, 340px)", objectFit: "cover", borderRadius: 10, marginBottom: "1.25rem", background: "var(--bg-soft)" }}
               />
             ) : (
-              <div style={{ width: "100%", height: 180, borderRadius: 10, marginBottom: "1.25rem", background: "var(--bg-soft)" }} />
+              <div style={{ width: "100%", height: "clamp(160px, 35vw, 220px)", borderRadius: 10, marginBottom: "1.25rem", background: "var(--bg-soft)" }} />
             )}
 
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: "0.75rem" }}>

@@ -57,7 +57,7 @@ export default function Organizations() {
             <div className="empty-state__text">لا توجد منظمات مطابقة للبحث</div>
           </div>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "1rem" }}>
+          <div className="responsive-orgs-grid">
             {filtered.map((o) => (
               <div key={o.id} className="card" style={{ padding: "1.1rem", cursor: "pointer", transition: "box-shadow 0.15s" }} onClick={() => nav(`/organizations/${o.id}`)}>
                 <div style={{ display: "flex", gap: "0.85rem", alignItems: "flex-start" }}>

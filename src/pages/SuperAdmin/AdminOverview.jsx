@@ -29,7 +29,7 @@ export default function AdminOverview() {
       {error ? <div className="alert alert--error">{error}</div> : null}
 
       {/* Stats */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "1rem", marginBottom: "1.5rem" }}>
+      <div className="responsive-stats-grid" style={{ marginBottom: "1.5rem" }}>
         {stats.map((s) => (
           <div key={s.label} className="stat-card">
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
@@ -45,7 +45,7 @@ export default function AdminOverview() {
       </div>
 
       {/* Activity feed */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: "1rem" }}>
+      <div className="responsive-dashboard-split">
         <div className="card" style={{ padding: "1.25rem" }}>
           <h2 className="section-title" style={{ marginBottom: "1rem" }}>آخر الأحداث</h2>
           <div className="alert alert--info">لا توجد واجهة نشاط عامة موثقة في API حالياً.</div>

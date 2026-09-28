@@ -68,15 +68,34 @@
 /* Responsive Design for Mobile Devices */
 @media (max-width: 768px) {
   .auth-container {
-    flex-direction: column-reverse; /* Stacks the form under the image, or vice versa */
+    flex-direction: column-reverse;
+    min-height: 100vh;
   }
 
   .auth-image-section {
-    min-height: 250px; /* Gives the image a fixed height on mobile */
+    min-height: 130px;
+    max-height: 160px;
     flex: none;
+  }
+
+  .auth-image-overlay {
+    padding: 1rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .auth-quote-text {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .auth-quote-subtext {
+    font-size: 0.8rem;
   }
   
   .auth-form-section {
-    padding: 1.5rem;
+    padding: 1.5rem 1rem;
+    flex: 1;
+    justify-content: flex-start;
   }
 }

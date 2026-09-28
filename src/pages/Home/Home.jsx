@@ -36,6 +36,7 @@ export default function Home() {
   useEffect(() => {
     getHomeData()
       .then((homeData) => {
+        console.log(homeData);
         setData(homeData);
         if (homeData.hasErrors) setError("تعذر تحميل بعض بيانات الصفحة.");
       })
@@ -64,10 +65,10 @@ export default function Home() {
             <span className="badge badge--gold" style={{ marginBottom: 16, display: "inline-flex" }}>
               منصة العطاء والخير
             </span>
-            <h1 style={{ fontSize: "2.4rem", fontWeight: 800, color: "#fff", lineHeight: 1.3, marginBottom: "1rem" }}>
+            <h1 style={{ fontSize: "clamp(1.75rem, 5vw, 2.4rem)", fontWeight: 800, color: "#fff", lineHeight: 1.3, marginBottom: "1rem" }}>
               كن جزءاً من التغيير،<br />تبرّع الآن
             </h1>
-            <p style={{ fontSize: "1rem", color: "rgba(255,255,255,0.82)", lineHeight: 1.7, marginBottom: "1.75rem" }}>
+            <p style={{ fontSize: "clamp(0.88rem, 2vw, 1rem)", color: "rgba(255,255,255,0.85)", lineHeight: 1.7, marginBottom: "1.75rem" }}>
               سِراج منصة خيرية تجمع المتبرعين بالمنظمات والحملات الإنسانية،
               لنصنع معاً فرقاً حقيقياً في حياة المحتاجين.
             </p>
@@ -90,7 +91,7 @@ export default function Home() {
       {/* Stats */}
       <section style={{ background: "#fff", borderBottom: "1px solid var(--border)", padding: "1.75rem 0" }}>
         <div className="page-container">
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "1rem" }}>
+          <div className="responsive-stats-grid">
             {stats.map((s) => (
               <div key={s.label} style={{ display: "flex", alignItems: "center", gap: "0.85rem" }}>
                 <div style={{ width: 42, height: 42, borderRadius: 10, background: s.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.1rem", color: s.iconColor, flexShrink: 0 }}>
@@ -109,7 +110,7 @@ export default function Home() {
       {/* Trending campaigns */}
       <section className="section">
         <div className="page-container">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem", flexWrap: "wrap", gap: "0.5rem" }}>
             <h2 className="section-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <FiTrendingUp color="var(--accent-green)" size={18} /> الحملات الأكثر تفاعلاً
             </h2>
@@ -117,7 +118,7 @@ export default function Home() {
               عرض الكل <FiArrowLeft size={13} />
             </button>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "1rem" }}>
+          <div className="responsive-cards-grid">
             {loading ? <p>جاري تحميل الحملات...</p> : trendingCampaigns.length ? trendingCampaigns.map((c) => <CampaignCard key={c.id} c={c} />) : <p>لا توجد حملات متاحة حالياً.</p>}
           </div>
         </div>
@@ -129,7 +130,7 @@ export default function Home() {
           <h2 className="section-title" style={{ marginBottom: "1.25rem", display: "flex", alignItems: "center", gap: 8 }}>
             <FiHeart color="var(--error)" size={18} /> حملات عاجلة — تنتهي قريباً
           </h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "1rem" }}>
+          <div className="responsive-cards-grid">
             {loading ? <p>جاري تحميل الحملات...</p> : urgentCampaigns.length ? urgentCampaigns.map((c) => (
               <CampaignCard key={c.id} c={c} />
             )) : <p>لا توجد حملات عاجلة حالياً.</p>}
@@ -140,13 +141,13 @@ export default function Home() {
       {/* Featured orgs */}
       <section className="section">
         <div className="page-container">
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem", flexWrap: "wrap", gap: "0.5rem" }}>
             <h2 className="section-title">منظمات شريكة مميزة</h2>
             <button className="btn btn--outline btn--sm" onClick={() => nav("/organizations")}>
               كل المنظمات
             </button>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "1rem" }}>
+          <div className="responsive-orgs-grid">
             {loading ? <p>جاري تحميل المنظمات...</p> : organizations.length ? organizations.map((o) => (
               <div key={o.id} className="org-card" onClick={() => nav(`/organizations/${o.id}`)}>
                 <div className="org-avatar">

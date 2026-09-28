@@ -16,6 +16,25 @@
 @media (max-width: 860px) {
   .profile-layout {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .profile-sidebar {
+    flex-direction: row;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0.5rem;
+    scrollbar-width: none;
+    gap: 0.5rem;
+  }
+  .profile-sidebar::-webkit-scrollbar {
+    display: none;
+  }
+  .profile-nav-item {
+    width: auto;
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding: 0.5rem 0.85rem;
+    font-size: 0.82rem;
   }
 }
 
@@ -68,6 +87,22 @@
   flex-wrap: wrap;
   gap: 1.25rem;
   box-shadow: var(--card-shadow);
+}
+
+@media (max-width: 650px) {
+  .profile-hero-card {
+    padding: 1.15rem;
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+  .profile-user-summary {
+    flex-direction: column;
+    text-align: center;
+  }
+  .profile-badges-row {
+    justify-content: center;
+  }
 }
 
 .profile-user-summary {
