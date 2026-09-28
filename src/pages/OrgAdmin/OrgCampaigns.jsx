@@ -373,9 +373,10 @@ const [showDeleted, setShowDeleted] = useState(false);
         </div>
       </div>
 
-      {/* Campaigns Table */}
+      {/* Campaigns Table & Cards */}
       <div className="card">
-        <div style={{ overflowX: "auto" }}>
+        {/* Desktop Table View */}
+        <div className="table-desktop-view" style={{ overflowX: "auto" }}>
           <table className="data-table">
             <thead>
               <tr>
@@ -517,6 +518,130 @@ const [showDeleted, setShowDeleted] = useState(false);
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Cards View with prominent actions */}
+        <div className="cards-mobile-view">
+          {loading ? (
+            <div style={{ textAlign: "center", padding: "2rem" }} className="muted">
+              جاري تحميل الحملات...
+            </div>
+          ) : filteredCampaigns.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "2.5rem" }} className="muted">
+              <FiTarget size={30} style={{ opacity: 0.3, marginBottom: 8, display: "block", margin: "0 auto" }} />
+              لا توجد حملات تطابق معايير البحث الحالية.
+            </div>
+          ) : (
+            filteredCampaigns.map((c) => {
+              const collected = Number(c.collectedMoney) || 0;
+              const targetVal = Number(c.targetMoney) || 1;
+              const isSolo = c.isSolo;
+              const label = campaignStatusLabel(c.status);
+              const isActive = String(c.status).toLowerCase() === "active" || label === "نشطة";
+              const deleted = Boolean(c.deleted || c.isDeleted);
+              const status = c.status || c.campaignStatus || "-";
+
+              return (
+                <div key={c.id} className="mobile-table-card">
+                  <div className="mobile-table-card__header">
+                    <div className="mobile-table-card__title">{c.title}</div>
+                    <div className="mobile-table-card__badges">
+                      <span className={`badge ${isSolo ? "badge--gray" : "badge--blue"}`}>
+                        {isSolo ? "فردية" : "مشتركة"}
+                      </span>
+                      <span className={`badge ${isActive ? "badge--green" : "badge--gray"}`}>
+                        {label}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="mobile-table-card__grid">
+                    <div>
+                      <div className="mobile-table-card__field-label">المجموع</div>
+                      <div className="mobile-table-card__field-val" style={{ color: "var(--brand-green)" }}>
+                        {collected.toLocaleString("ar-EG")} ج.م
+                      </div>
+                    </div>
+                    <div>
+                      <div className="mobile-table-card__field-label">المستهدف</div>
+                      <div className="mobile-table-card__field-val">
+                        {targetVal.toLocaleString("ar-EG")} ج.م
+                      </div>
+                    </div>
+                    <div>
+                      <div className="mobile-table-card__field-label">الموعد النهائي</div>
+                      <div className="mobile-table-card__field-val" style={{ fontSize: "0.75rem" }}>
+                        {c.deadline ? new Date(c.deadline).toLocaleDateString("ar-EG") : "غير محدد"}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="mobile-table-card__field-label">المعرف</div>
+                      <div className="mobile-table-card__field-val">#{c.id}</div>
+                    </div>
+                  </div>
+
+                  <div style={{ marginTop: 2 }}>
+                    <ProgressBar value={collected} max={targetVal} label />
+                  </div>
+
+                  {/* Actions Bar */}
+                  <div className="mobile-table-card__actions">
+                    <button
+                      className="btn btn--outline btn--sm"
+                      onClick={() => openDetailsModal(c)}
+                    >
+                      <FiEye size={13} /> تفاصيل
+                    </button>
+
+                    <button
+                      className="btn btn--ghost btn--sm"
+                      onClick={() => openEditModal(c)}
+                    >
+                      <FiEdit2 size={13} /> تعديل
+                    </button>
+
+                    <button
+                      className="btn btn--ghost btn--sm"
+                      style={{ color: isActive ? "var(--error)" : "var(--brand-green)" }}
+                      onClick={() => handleToggleStatus(c)}
+                    >
+                      {isActive ? <><FiPauseCircle size={14} /> إيقاف</> : <><FiPlayCircle size={14} /> تفعيل</>}
+                    </button>
+
+                    {deleted ? (
+                      <button
+                        className="btn btn--outline btn--sm"
+                        onClick={async () => { try { await restoreCampaign(c.id); await loadCampaigns(); } catch { setError("تعذر استعادة الحملة."); } }}
+                      >
+                        <FiRefreshCw size={12} /> استعادة
+                      </button>
+                    ) : (
+                      <select
+                        className="field-select"
+                        value={campaignStatusLabel(status)}
+                        onChange={async (e) => { try { await updateCampaignStatus(c.id, campaignStatusValue(e.target.value)); await loadCampaigns(); } catch { setError("تعذر تحديث حالة الحملة."); } }}
+                      >
+                        <option>تُحضر</option>
+                        <option>نشطة</option>
+                        <option>مكتملة</option>
+                        <option>مستبعدة</option>
+                        <option>مؤجلة</option>
+                        <option>منتهية</option>
+                      </select>
+                    )}
+
+                    <button
+                      className="btn btn--ghost btn--sm"
+                      style={{ color: "var(--error)" }}
+                      onClick={() => handleDelete(c)}
+                    >
+                      <FiTrash2 size={13} /> حذف
+                    </button>
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
 

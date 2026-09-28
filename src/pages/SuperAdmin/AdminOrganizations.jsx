@@ -171,71 +171,175 @@ export default function AdminOrganizations() {
 
       <div className="card">
         {error ? <div className="alert alert--error">{error}</div> : null}
-        <div style={{ overflowX: "auto" }}>
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>المنظمة</th>
-                <th>الموقع</th>
-                <th>الحملات</th>
-                <th>بوابة الدفع</th>
-                <th>الحالة</th>
-                <th>إجراءات</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? <tr><td colSpan={6}>جار تحميل المنظمات...</td></tr> : null}
-              {!loading && orgs.length === 0 ? <tr><td colSpan={6}>لا توجد منظمات.</td></tr> : null}
-              {!loading && orgs.map((o) => {
-                const name = o.name || o.organizationName || "-";
-                const deleted = Boolean(o.deleted || o.isDeleted);
-                const campaigns = o.campaignsCount ?? o.campaignCount ?? o.campaigns?.length ?? 0;
-                const payment = Boolean(o.hasPaymentInfo || o.paymentInfo || o.payment);
-                return (
-                <tr key={o.id} style={{ opacity: o.deleted ? 0.5 : 1 }}>
-                  <td style={{ fontWeight: 600 }}>{name}</td>
-                  <td className="muted">{o.address || "-"}</td>
-                  <td>{campaigns}</td>
-                  <td>
-                    {payment
-                      ? <span className="badge badge--green"><FiCheckCircle size={9} /> مفعّل</span>
-                      : <span className="badge badge--red"><FiAlertCircle size={9} /> غير مفعّل</span>
-                    }
-                  </td>
-                  <td>
-                    <span className={`badge ${deleted ? "badge--red" : "badge--green"}`}>
-                      {deleted ? "محذوفة" : "نشطة"}
-                    </span>
-                  </td>
-                  <td>
-                    <div style={{ display: "flex", gap: 4 }}>
-                      {deleted ? (
-                        <button className="btn btn--outline btn--sm" style={{ display: "flex", alignItems: "center", gap: 4 }} onClick={() => handleRestore(o.id)}>
-                          <FiRefreshCw size={11} /> استعادة
-                        </button>
-                      ) : (
-                        <>
-                          <button className="btn btn--ghost btn--sm" style={{ padding: "4px 8px" }} onClick={() => openDetailsModal(o)} aria-label={`عرض تفاصيل ${name}`}>
-                            <FiEye size={12} />
-                          </button>
-                          <button className="btn btn--ghost btn--sm" style={{ padding: "4px 8px" }} onClick={() => openEditModal(o)} aria-label={`تعديل ${name}`}>
-                            <FiEdit2 size={12} />
-                          </button>
-                          <button className="btn btn--ghost btn--sm" style={{ padding: "4px 8px" }} onClick={() => openAdminModal(o)} aria-label={`تعيين مسؤول ${name}`}>
-                            <FiUserPlus size={12} />
-                          </button>
-                          <button className="btn btn--ghost btn--sm" style={{ padding: "4px 8px", color: "var(--error)" }} onClick={() => handleDelete(o.id)}>
-                            <FiTrash2 size={12} />
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  </td>
+        {/* Desktop Table View */}
+        <div className="table-desktop-view">
+          <div style={{ overflowX: "auto" }}>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>المنظمة</th>
+                  <th>الموقع</th>
+                  <th>الحملات</th>
+                  <th>بوابة الدفع</th>
+                  <th>الحالة</th>
+                  <th style={{ textAlign: "center" }}>إجراءات</th>
                 </tr>
-                );
-              })}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {loading ? <tr><td colSpan={6} style={{ textAlign: "center", padding: "2rem" }}>جار تحميل المنظمات...</td></tr> : null}
+                {!loading && orgs.length === 0 ? <tr><td colSpan={6} style={{ textAlign: "center", padding: "2rem" }}>لا توجد منظمات.</td></tr> : null}
+                {!loading && orgs.map((o) => {
+                  const name = o.name || o.organizationName || "-";
+                  const deleted = Boolean(o.deleted || o.isDeleted);
+                  const campaigns = o.campaignsCount ?? o.campaignCount ?? o.campaigns?.length ?? 0;
+                  const payment = Boolean(o.hasPaymentInfo || o.paymentInfo || o.payment);
+                  return (
+                  <tr key={o.id} style={{ opacity: o.deleted ? 0.5 : 1 }}>
+                    <td style={{ fontWeight: 600 }}>{name}</td>
+                    <td className="muted">{o.address || "-"}</td>
+                    <td>{campaigns}</td>
+                    <td>
+                      {payment
+                        ? <span className="badge badge--green"><FiCheckCircle size={9} /> مفعّل</span>
+                        : <span className="badge badge--red"><FiAlertCircle size={9} /> غير مفعّل</span>
+                      }
+                    </td>
+                    <td>
+                      <span className={`badge ${deleted ? "badge--red" : "badge--green"}`}>
+                        {deleted ? "محذوفة" : "نشطة"}
+                      </span>
+                    </td>
+                    <td style={{ textAlign: "center" }}>
+                      <div style={{ display: "flex", gap: 4, justifyContent: "center" }}>
+                        {deleted ? (
+                          <button className="btn btn--outline btn--sm" style={{ display: "flex", alignItems: "center", gap: 4 }} onClick={() => handleRestore(o.id)}>
+                            <FiRefreshCw size={11} /> استعادة
+                          </button>
+                        ) : (
+                          <>
+                            <button className="btn btn--ghost btn--sm" style={{ padding: "4px 8px" }} onClick={() => openDetailsModal(o)} aria-label={`عرض تفاصيل ${name}`} title="عرض التفاصيل">
+                              <FiEye size={12} />
+                            </button>
+                            <button className="btn btn--ghost btn--sm" style={{ padding: "4px 8px" }} onClick={() => openEditModal(o)} aria-label={`تعديل ${name}`} title="تعديل">
+                              <FiEdit2 size={12} />
+                            </button>
+                            <button className="btn btn--ghost btn--sm" style={{ padding: "4px 8px" }} onClick={() => openAdminModal(o)} aria-label={`تعيين مسؤول ${name}`} title="تعيين مسؤول">
+                              <FiUserPlus size={12} />
+                            </button>
+                            <button className="btn btn--ghost btn--sm" style={{ padding: "4px 8px", color: "var(--error)" }} onClick={() => handleDelete(o.id)} title="حذف">
+                              <FiTrash2 size={12} />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Mobile Cards View */}
+        <div className="cards-mobile-view">
+          {loading ? (
+            <div style={{ textAlign: "center", padding: "2rem" }} className="muted">
+              جار تحميل المنظمات...
+            </div>
+          ) : orgs.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "2rem" }} className="muted">
+              لا توجد منظمات مسجلة.
+            </div>
+          ) : (
+            orgs.map((o) => {
+              const name = o.name || o.organizationName || "-";
+              const deleted = Boolean(o.deleted || o.isDeleted);
+              const campaigns = o.campaignsCount ?? o.campaignCount ?? o.campaigns?.length ?? 0;
+              const payment = Boolean(o.hasPaymentInfo || o.paymentInfo || o.payment);
+
+              return (
+                <div key={o.id} className="mobile-table-card" style={{ opacity: deleted ? 0.65 : 1 }}>
+                  <div className="mobile-table-card__header">
+                    <div className="mobile-table-card__title">{name}</div>
+                    <div className="mobile-table-card__badges">
+                      {payment ? (
+                        <span className="badge badge--green" style={{ fontSize: "0.7rem", display: "inline-flex", alignItems: "center", gap: 3 }}>
+                          <FiCheckCircle size={9} /> دفع مفعّل
+                        </span>
+                      ) : (
+                        <span className="badge badge--red" style={{ fontSize: "0.7rem", display: "inline-flex", alignItems: "center", gap: 3 }}>
+                          <FiAlertCircle size={9} /> بدون دفع
+                        </span>
+                      )}
+                      <span className={`badge ${deleted ? "badge--red" : "badge--green"}`}>
+                        {deleted ? "محذوفة" : "نشطة"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="mobile-table-card__grid">
+                    <div>
+                      <div className="mobile-table-card__field-label">العنوان</div>
+                      <div className="mobile-table-card__field-val" style={{ fontSize: "0.8rem" }}>
+                        {o.address || "-"}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="mobile-table-card__field-label">الحملات</div>
+                      <div className="mobile-table-card__field-val" style={{ fontWeight: 700 }}>
+                        {campaigns}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="mobile-table-card__field-label">المعرف</div>
+                      <div className="mobile-table-card__field-val">#{o.id}</div>
+                    </div>
+                  </div>
+
+                  {/* Actions Bar */}
+                  <div className="mobile-table-card__actions">
+                    {deleted ? (
+                      <button
+                        className="btn btn--outline btn--sm"
+                        onClick={() => handleRestore(o.id)}
+                      >
+                        <FiRefreshCw size={12} /> استعادة
+                      </button>
+                    ) : (
+                      <>
+                        <button
+                          className="btn btn--outline btn--sm"
+                          onClick={() => openDetailsModal(o)}
+                        >
+                          <FiEye size={13} /> تفاصيل
+                        </button>
+                        <button
+                          className="btn btn--ghost btn--sm"
+                          onClick={() => openEditModal(o)}
+                        >
+                          <FiEdit2 size={13} /> تعديل
+                        </button>
+                        <button
+                          className="btn btn--ghost btn--sm"
+                          onClick={() => openAdminModal(o)}
+                        >
+                          <FiUserPlus size={13} /> مسؤول
+                        </button>
+                        <button
+                          className="btn btn--ghost btn--sm"
+                          style={{ color: "var(--error)" }}
+                          onClick={() => handleDelete(o.id)}
+                        >
+                          <FiTrash2 size={13} /> حذف
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
 

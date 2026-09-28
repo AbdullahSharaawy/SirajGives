@@ -95,8 +95,8 @@ const handleRemoveSuperAdmin = async () => {
 
       </div>
 
-      <div style={{ display: "flex", gap: "0.75rem", marginBottom: "1.25rem", flexWrap: "wrap" }}>
-        <div className="search-bar" style={{ flex: 1, minWidth: 200 }}>
+      <div style={{ display: "flex", gap: "0.75rem", marginBottom: "1.25rem", flexWrap: "wrap", alignItems: "center" }}>
+        <div className="search-bar" style={{ flex: 1, minWidth: 200, marginBottom: 0 }}>
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="ابحث بالاسم أو البريد..." />
           <button><FiSearch size={14} /></button>
         </div>
@@ -108,87 +108,208 @@ const handleRemoveSuperAdmin = async () => {
 
       <div className="card">
         {error ? <div className="alert alert--error">{error}</div> : null}
-        <div style={{ overflowX: "auto" }}>
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>المستخدم</th>
-                <th>البريد الإلكتروني</th>
-                <th>الأدوار</th>
-                <th>العنوان</th>
-                <th>الهاتف</th>
-                <th>تاريخ الانضمام</th>
-                <th>الإجراءات</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? <tr><td colSpan={7}>جار تحميل المستخدمين...</td></tr> : null}
-              {!loading && filtered.length === 0 ? <tr><td colSpan={7}>لا توجد نتائج.</td></tr> : null}
-              {!loading && filtered.map((u) => {
-                const name = u.fullName || u.userName || "-";
-                const rawRoles = u.roles || [];
-                const roles = Array.isArray(rawRoles) ? rawRoles : [rawRoles];
-                const isSuperAdmin = roles.some((r) => (typeof r === "string" ? r : r.name) === "SuperAdmin");
-                const joined = u.registrationDate || "-";
-                const deleted = Boolean(u.isDeleted);
-                console.log(u);
-                return <tr key={u.id} style={{ opacity: u.isDeleted ? 0.55 : 1 }}>
-                  <td>
+        
+        {/* Desktop Table View */}
+        <div className="table-desktop-view">
+          <div style={{ overflowX: "auto" }}>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>المستخدم</th>
+                  <th>البريد الإلكتروني</th>
+                  <th>الأدوار</th>
+                  <th>العنوان</th>
+                  <th>الهاتف</th>
+                  <th>تاريخ الانضمام</th>
+                  <th style={{ textAlign: "center" }}>الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? <tr><td colSpan={7} style={{ textAlign: "center", padding: "2rem" }}>جار تحميل المستخدمين...</td></tr> : null}
+                {!loading && filtered.length === 0 ? <tr><td colSpan={7} style={{ textAlign: "center", padding: "2rem" }}>لا توجد نتائج.</td></tr> : null}
+                {!loading && filtered.map((u) => {
+                  const name = u.fullName || u.userName || "-";
+                  const rawRoles = u.roles || [];
+                  const roles = Array.isArray(rawRoles) ? rawRoles : [rawRoles];
+                  const isSuperAdmin = roles.some((r) => (typeof r === "string" ? r : r.name) === "SuperAdmin");
+                  const joined = u.registrationDate || "-";
+                  const deleted = Boolean(u.isDeleted);
+                  return <tr key={u.id} style={{ opacity: u.isDeleted ? 0.55 : 1 }}>
+                    <td>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <div style={{ width: 28, height: 28, borderRadius: "50%", background: "var(--bg-soft)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--muted-text)" }}>
+                          <FiUser size={13} />
+                        </div>
+                        <span style={{ fontWeight: 600 }}>{name}</span>
+                      </div>
+                    </td>
+                    <td className="muted">{u.email || "-"}</td>
+                    <td>
+                      <div style={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
+                        {roles.map((r) => {
+                          const role = typeof r === "string" ? r : r.name || "-";
+                          return <span key={role} className={`badge ${role === "SuperAdmin" ? "badge--red" : role === "OrgAdmin" ? "badge--gold" : "badge--blue"}`}>{role}</span>;
+                        })}
+                      </div>
+                    </td>
+                    <td className="muted">{u.address || "-"}</td>
+                    <td className="muted">{u.phoneNumber || "-"}</td>
+                    <td className="muted">{joined ? new Date(joined).toLocaleDateString("ar-EG") : "-"}</td>
+                    <td style={{ textAlign: "center" }}>
+                      <div style={{ display: "flex", gap: 4, justifyContent: "center" }}>
+                        {deleted ? (
+                          <button className="btn btn--outline btn--sm" style={{ display: "flex", alignItems: "center", gap: 4 }} onClick={() => handleRestore(u.id)}>
+                            <FiRefreshCw size={11} /> استعادة
+                          </button>
+                        ) : (
+                          <>
+                            <button className="btn btn--ghost btn--sm" style={{ padding: "4px 8px" }} onClick={() => setDetailsUser(u)} aria-label={`عرض تفاصيل ${name}`} title="عرض التفاصيل">
+                              <FiEye size={12} />
+                            </button>
+                            {!isSuperAdmin ? (
+                              <button className="btn btn--ghost btn--sm" style={{ padding: "4px 8px" }} onClick={() => setAssignRoleUser(u)} aria-label={`تعيين SuperAdmin لـ ${name}`} title="تعيين SuperAdmin">
+                                <FiShield size={12} />
+                              </button>
+                            ) : (
+                              <button
+                                className="btn btn--ghost btn--sm"
+                                style={{ padding: "4px 8px", color: "var(--error)" }}
+                                onClick={() => setRemoveRoleUser(u)}
+                                aria-label={`إزالة صلاحية SuperAdmin من ${name}`}
+                                title="إزالة صلاحية SuperAdmin"
+                              >
+                                <FiShieldOff size={12} />
+                              </button>
+                            )}
+                            <button className="btn btn--ghost btn--sm" style={{ padding: "4px 8px", color: "var(--error)" }} onClick={() => handleDelete(u.id)} aria-label={`حذف ${name}`} title="حذف">
+                              <FiTrash2 size={12} />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>;
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Mobile Cards View */}
+        <div className="cards-mobile-view">
+          {loading ? (
+            <div style={{ textAlign: "center", padding: "2rem" }} className="muted">
+              جار تحميل المستخدمين...
+            </div>
+          ) : filtered.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "2rem" }} className="muted">
+              لا توجد نتائج مطابقة للبحث.
+            </div>
+          ) : (
+            filtered.map((u) => {
+              const name = u.fullName || u.userName || "-";
+              const rawRoles = u.roles || [];
+              const roles = Array.isArray(rawRoles) ? rawRoles : [rawRoles];
+              const isSuperAdmin = roles.some((r) => (typeof r === "string" ? r : r.name) === "SuperAdmin");
+              const joined = u.registrationDate || "-";
+              const deleted = Boolean(u.isDeleted);
+
+              return (
+                <div key={u.id} className="mobile-table-card" style={{ opacity: deleted ? 0.65 : 1 }}>
+                  <div className="mobile-table-card__header">
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                       <div style={{ width: 28, height: 28, borderRadius: "50%", background: "var(--bg-soft)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--muted-text)" }}>
                         <FiUser size={13} />
                       </div>
-                      <span style={{ fontWeight: 600 }}>{name}</span>
+                      <div className="mobile-table-card__title">{name}</div>
                     </div>
-                  </td>
-                  <td className="muted">{u.email || "-"}</td>
-                  <td>
-                    <div style={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
+                    <div className="mobile-table-card__badges">
                       {roles.map((r) => {
                         const role = typeof r === "string" ? r : r.name || "-";
-                        return <span key={role} className={`badge ${role === "SuperAdmin" ? "badge--red" : role === "OrgAdmin" ? "badge--gold" : "badge--blue"}`}>{role}</span>;
+                        return (
+                          <span key={role} className={`badge ${role === "SuperAdmin" ? "badge--red" : role === "OrgAdmin" ? "badge--gold" : "badge--blue"}`}>
+                            {role}
+                          </span>
+                        );
                       })}
+                      {deleted && <span className="badge badge--red">محذوف</span>}
                     </div>
-                  </td>
-                  <td className="muted">{u.address || "-"}</td>
-                  <td className="muted">{u.phoneNumber || "-"}</td>
-                  <td className="muted">{joined ?new Date(joined).toLocaleDateString("ar-EG")  :"-"}</td>
-                  <td>
-                    <div style={{ display: "flex", gap: 4 }}>
-                      {deleted ? (
-                        <button className="btn btn--outline btn--sm" style={{ display: "flex", alignItems: "center", gap: 4 }} onClick={() => handleRestore(u.id)}>
-                          <FiRefreshCw size={11} /> استعادة
+                  </div>
+
+                  <div className="mobile-table-card__grid">
+                    <div style={{ gridColumn: "span 2" }}>
+                      <div className="mobile-table-card__field-label">البريد الإلكتروني</div>
+                      <div className="mobile-table-card__field-val" style={{ fontSize: "0.8rem", wordBreak: "break-all" }}>
+                        {u.email || "-"}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="mobile-table-card__field-label">الهاتف</div>
+                      <div className="mobile-table-card__field-val" style={{ fontSize: "0.8rem" }}>
+                        {u.phoneNumber || "-"}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="mobile-table-card__field-label">العنوان</div>
+                      <div className="mobile-table-card__field-val" style={{ fontSize: "0.8rem" }}>
+                        {u.address || "-"}
+                      </div>
+                    </div>
+                    <div style={{ gridColumn: "span 2" }}>
+                      <div className="mobile-table-card__field-label">تاريخ الانضمام</div>
+                      <div className="mobile-table-card__field-val" style={{ fontSize: "0.75rem" }}>
+                        {joined ? new Date(joined).toLocaleDateString("ar-EG") : "-"}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions Bar */}
+                  <div className="mobile-table-card__actions">
+                    {deleted ? (
+                      <button
+                        className="btn btn--outline btn--sm"
+                        onClick={() => handleRestore(u.id)}
+                      >
+                        <FiRefreshCw size={12} /> استعادة
+                      </button>
+                    ) : (
+                      <>
+                        <button
+                          className="btn btn--outline btn--sm"
+                          onClick={() => setDetailsUser(u)}
+                        >
+                          <FiEye size={13} /> تفاصيل
                         </button>
-                      ) : (
-                        <>
-                          <button className="btn btn--ghost btn--sm" style={{ padding: "4px 8px" }} onClick={() => setDetailsUser(u)} aria-label={`عرض تفاصيل ${name}`}>
-                            <FiEye size={12} />
+                        {!isSuperAdmin ? (
+                          <button
+                            className="btn btn--ghost btn--sm"
+                            onClick={() => setAssignRoleUser(u)}
+                          >
+                            <FiShield size={13} /> ترقية SuperAdmin
                           </button>
-                         {!isSuperAdmin ? (
-        <button className="btn btn--ghost btn--sm" style={{ padding: "4px 8px" }} onClick={() => setAssignRoleUser(u)} aria-label={`تعيين SuperAdmin لـ ${name}`}>
-          <FiShield size={12} />
-        </button>
-      ) : (
-        <button
-          className="btn btn--ghost btn--sm"
-          style={{ padding: "4px 8px", color: "var(--error)" }}
-          onClick={() => setRemoveRoleUser(u)}
-          aria-label={`إزالة صلاحية SuperAdmin من ${name}`}
-        >
-          <FiShieldOff size={12} />
-        </button>
-      )}
-                          <button className="btn btn--ghost btn--sm" style={{ padding: "4px 8px", color: "var(--error)" }} onClick={() => handleDelete(u.id)} aria-label={`حذف ${name}`}>
-                            <FiTrash2 size={12} />
+                        ) : (
+                          <button
+                            className="btn btn--ghost btn--sm"
+                            style={{ color: "var(--error)" }}
+                            onClick={() => setRemoveRoleUser(u)}
+                          >
+                            <FiShieldOff size={13} /> إلغاء SuperAdmin
                           </button>
-                        </>
-                      )}
-                    </div>
-                  </td>
-                </tr>;
-              })}
-            </tbody>
-          </table>
+                        )}
+                        <button
+                          className="btn btn--ghost btn--sm"
+                          style={{ color: "var(--error)" }}
+                          onClick={() => handleDelete(u.id)}
+                        >
+                          <FiTrash2 size={13} /> حذف
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
 

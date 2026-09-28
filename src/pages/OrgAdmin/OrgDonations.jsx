@@ -372,7 +372,7 @@ export default function OrgDonations() {
       )}
 
       {/* Overview Stat Cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem", marginBottom: "1.5rem" }}>
+      <div className="responsive-stats-grid" style={{ marginBottom: "1.5rem" }}>
         <div className="stat-card">
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
             <div className="stat-card__label">إجمالي التبرعات النشطة</div>
@@ -458,105 +458,204 @@ export default function OrgDonations() {
           </div>
         </div>
 
-        <div style={{ overflowX: "auto" }}>
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>رقم التبرع</th>
-                <th>المتبرع</th>
-                <th>الحملة</th>
-                <th>المبلغ</th>
-                <th>تاريخ التبرع</th>
-                <th>الحالة</th>
-                <th style={{ textAlign: "center" }}>إجراءات</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
+        {/* Desktop Table View */}
+        <div className="table-desktop-view">
+          <div style={{ overflowX: "auto" }}>
+            <table className="data-table">
+              <thead>
                 <tr>
-                  <td colSpan={7} style={{ textAlign: "center", padding: "2rem" }} className="muted">
-                    جاري تحميل التبرعات...
-                  </td>
+                  <th>رقم التبرع</th>
+                  <th>المتبرع</th>
+                  <th>الحملة</th>
+                  <th>المبلغ</th>
+                  <th>تاريخ التبرع</th>
+                  <th>الحالة</th>
+                  <th style={{ textAlign: "center" }}>إجراءات</th>
                 </tr>
-              ) : filteredDonations.length === 0 ? (
-                <tr>
-                  <td colSpan={7} style={{ textAlign: "center", padding: "2.5rem" }} className="muted">
-                    <FiDollarSign size={28} style={{ opacity: 0.3, marginBottom: 6, display: "block", margin: "0 auto" }} />
-                    لا توجد عمليات تبرع مطابقة للبحث أو الفلتر المختار.
-                  </td>
-                </tr>
-              ) : (
-                filteredDonations.map((d) => (
-                  <tr key={d.id} style={{ opacity: d.isDeleted ? 0.65 : 1 }}>
-                    <td style={{ fontWeight: 700, fontSize: "0.82rem" }}>#{d.id}</td>
-                    <td style={{ fontWeight: 600 }}>{d.donorName}</td>
-                    <td className="muted" style={{ maxWidth: 220, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={d.campaignTitle}>
-                      {d.campaignTitle}
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan={7} style={{ textAlign: "center", padding: "2rem" }} className="muted">
+                      جاري تحميل التبرعات...
                     </td>
-                    <td style={{ color: d.isDeleted ? "var(--muted-text)" : "var(--brand-green)", fontWeight: 700 }}>
-                      {d.amount.toLocaleString("ar-EG")} ج.م
+                  </tr>
+                ) : filteredDonations.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} style={{ textAlign: "center", padding: "2.5rem" }} className="muted">
+                      <FiDollarSign size={28} style={{ opacity: 0.3, marginBottom: 6, display: "block", margin: "0 auto" }} />
+                      لا توجد عمليات تبرع مطابقة للبحث أو الفلتر المختار.
                     </td>
-                    <td className="muted" style={{ fontSize: "0.78rem" }}>
-                      {d.date ? new Date(d.date).toLocaleString("ar-EG") : "—"}
-                    </td>
-                    <td>
-                      <span className={`badge ${d.isDeleted ? "badge--gray" : "badge--green"}`}>
-                        {d.status}
-                      </span>
-                    </td>
-                    <td style={{ textAlign: "center" }}>
-                      <div style={{ display: "flex", gap: 6, justifyContent: "center" }}>
-                         <button
+                  </tr>
+                ) : (
+                  filteredDonations.map((d) => (
+                    <tr key={d.id} style={{ opacity: d.isDeleted ? 0.65 : 1 }}>
+                      <td style={{ fontWeight: 700, fontSize: "0.82rem" }}>#{d.id}</td>
+                      <td style={{ fontWeight: 600 }}>{d.donorName}</td>
+                      <td className="muted" style={{ maxWidth: 220, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={d.campaignTitle}>
+                        {d.campaignTitle}
+                      </td>
+                      <td style={{ color: d.isDeleted ? "var(--muted-text)" : "var(--brand-green)", fontWeight: 700 }}>
+                        {d.amount.toLocaleString("ar-EG")} ج.م
+                      </td>
+                      <td className="muted" style={{ fontSize: "0.78rem" }}>
+                        {d.date ? new Date(d.date).toLocaleString("ar-EG") : "—"}
+                      </td>
+                      <td>
+                        <span className={`badge ${d.isDeleted ? "badge--gray" : "badge--green"}`}>
+                          {d.status}
+                        </span>
+                      </td>
+                      <td style={{ textAlign: "center" }}>
+                        <div style={{ display: "flex", gap: 6, justifyContent: "center" }}>
+                          <button
                             className="btn btn--ghost btn--sm"
                             style={{ padding: "4px 7px" }}
                             title="عرض التفاصيل"
-                             onClick={() => setSelectedDonation(d)}
+                            onClick={() => setSelectedDonation(d)}
                           >
                             <FiEye size={13} />
                           </button>
-                       
 
-                        {!d.isDeleted && (
+                          {!d.isDeleted && (
                             <button
-                            className="btn btn--ghost btn--sm"
-                            style={{ padding: "4px 7px" }}
-                            title="تعديل الحملة"
-                             onClick={() => handleOpenEditModal(d)}
-                          >
-                            <FiEdit2 size={13} />
-                          </button>
-                         
-                        )}
+                              className="btn btn--ghost btn--sm"
+                              style={{ padding: "4px 7px" }}
+                              title="تعديل الحملة"
+                              onClick={() => handleOpenEditModal(d)}
+                            >
+                              <FiEdit2 size={13} />
+                            </button>
+                          )}
 
-                        {!d.isDeleted ? (
-                           <button
-                            className="btn btn--ghost btn--sm"
-                            style={{ padding: "4px 7px", color: "var(--error)" }}
-                            title="حذف الحملة"
-                           disabled={actionLoadingId === d.id}
-                            onClick={() => setDeleteConfirmId(d.id)}
-                          >
-                            <FiTrash2 size={13} />
-                          </button>
-                          
-                        ) : (
-                          <button
-                            className="btn btn--ghost btn--sm"
-                            style={{padding: "4px 7px", color: "#16a34a" }}
-                            title="استعادة التبرع"
-                            disabled={actionLoadingId === d.id}
-                            onClick={() => handleRestore(d.id)}
-                          >
-                            <FiRotateCcw size={13} />
-                          </button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                          {!d.isDeleted ? (
+                            <button
+                              className="btn btn--ghost btn--sm"
+                              style={{ padding: "4px 7px", color: "var(--error)" }}
+                              title="حذف الحملة"
+                              disabled={actionLoadingId === d.id}
+                              onClick={() => setDeleteConfirmId(d.id)}
+                            >
+                              <FiTrash2 size={13} />
+                            </button>
+                          ) : (
+                            <button
+                              className="btn btn--ghost btn--sm"
+                              style={{ padding: "4px 7px", color: "#16a34a" }}
+                              title="استعادة التبرع"
+                              disabled={actionLoadingId === d.id}
+                              onClick={() => handleRestore(d.id)}
+                            >
+                              <FiRotateCcw size={13} />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Mobile Cards View */}
+        <div className="cards-mobile-view">
+          {loading ? (
+            <div style={{ textAlign: "center", padding: "2rem" }} className="muted">
+              جاري تحميل التبرعات...
+            </div>
+          ) : filteredDonations.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "2.5rem" }} className="muted">
+              <FiDollarSign size={28} style={{ opacity: 0.3, marginBottom: 6, display: "block", margin: "0 auto" }} />
+              لا توجد عمليات تبرع مطابقة للبحث أو الفلتر المختار.
+            </div>
+          ) : (
+            filteredDonations.map((d) => (
+              <div key={d.id} className="mobile-table-card" style={{ opacity: d.isDeleted ? 0.65 : 1 }}>
+                <div className="mobile-table-card__header">
+                  <div className="mobile-table-card__title" style={{ fontSize: "0.95rem" }}>
+                    {d.donorName}
+                  </div>
+                  <div className="mobile-table-card__badges">
+                    <span className="badge badge--blue" style={{ fontSize: "0.72rem" }}>
+                      #{d.id}
+                    </span>
+                    <span className={`badge ${d.isDeleted ? "badge--gray" : "badge--green"}`}>
+                      {d.status}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="mobile-table-card__grid">
+                  <div>
+                    <div className="mobile-table-card__field-label">المبلغ</div>
+                    <div
+                      className="mobile-table-card__field-val"
+                      style={{ color: d.isDeleted ? "var(--muted-text)" : "var(--brand-green)", fontWeight: 700 }}
+                    >
+                      {d.amount.toLocaleString("ar-EG")} ج.م
+                    </div>
+                  </div>
+                  <div>
+                    <div className="mobile-table-card__field-label">الحملة</div>
+                    <div
+                      className="mobile-table-card__field-val"
+                      style={{ fontSize: "0.78rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: 140 }}
+                      title={d.campaignTitle}
+                    >
+                      {d.campaignTitle}
+                    </div>
+                  </div>
+                  <div style={{ gridColumn: "span 2" }}>
+                    <div className="mobile-table-card__field-label">تاريخ التبرع</div>
+                    <div className="mobile-table-card__field-val" style={{ fontSize: "0.75rem" }}>
+                      {d.date ? new Date(d.date).toLocaleString("ar-EG") : "—"}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actions Bar */}
+                <div className="mobile-table-card__actions">
+                  <button
+                    className="btn btn--outline btn--sm"
+                    onClick={() => setSelectedDonation(d)}
+                  >
+                    <FiEye size={13} /> تفاصيل
+                  </button>
+
+                  {!d.isDeleted && (
+                    <button
+                      className="btn btn--ghost btn--sm"
+                      onClick={() => handleOpenEditModal(d)}
+                    >
+                      <FiEdit2 size={13} /> تعديل
+                    </button>
+                  )}
+
+                  {!d.isDeleted ? (
+                    <button
+                      className="btn btn--ghost btn--sm"
+                      style={{ color: "var(--error)" }}
+                      disabled={actionLoadingId === d.id}
+                      onClick={() => setDeleteConfirmId(d.id)}
+                    >
+                      <FiTrash2 size={13} /> حذف
+                    </button>
+                  ) : (
+                    <button
+                      className="btn btn--ghost btn--sm"
+                      style={{ color: "#16a34a" }}
+                      disabled={actionLoadingId === d.id}
+                      onClick={() => handleRestore(d.id)}
+                    >
+                      <FiRotateCcw size={13} /> استعادة
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
 

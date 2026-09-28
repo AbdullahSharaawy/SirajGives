@@ -48,9 +48,13 @@ const closeDetailsModal = () => setDetailsCampaign(null);
     const haystack = `${c.title || ""} ${c.organizationName || ""}`.toLowerCase();
     const ms = haystack.includes(search.toLowerCase());
     
-    if (statusFilter === "الكل") return ms;
-    // Only filter by matching active/ended statuses
-    return ms && campaignStatusLabel(c.status) === statusFilter; 
+    const matchType =
+      typeFilter === "all" ||
+      (typeFilter === "solo" && c.isSolo) ||
+      (typeFilter === "shared" && !c.isSolo);
+
+    if (statusFilter === "الكل") return ms && matchType;
+    return ms && matchType && campaignStatusLabel(c.status) === statusFilter; 
   });
 
   
@@ -69,8 +73,8 @@ const closeDetailsModal = () => setDetailsCampaign(null);
           عرض الحملات المحذوفة
         </label>
       </div>
-      <div style={{ display: "flex", gap: "0.75rem", marginBottom: "1.25rem", flexWrap: "wrap" }}>
-        <div className="search-bar" style={{ flex: 1, minWidth: 200 }}>
+      <div style={{ display: "flex", gap: "0.75rem", marginBottom: "1.25rem", flexWrap: "wrap", alignItems: "center" }}>
+        <div className="search-bar" style={{ flex: 1, minWidth: 200, marginBottom: 0 }}>
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="ابحث عن حملة..." />
           <button><FiSearch size={14} /></button>
         </div>
@@ -98,7 +102,7 @@ const closeDetailsModal = () => setDetailsCampaign(null);
             مشتركة
           </button>
         </div>
-        <div className="tabs" style={{ marginBottom: 0, border: "none" }}>
+        <div className="tabs" style={{ marginBottom: 0, border: "none", overflowX: "auto", maxWidth: "100%" }}>
           {STATUSES.map((s) => (
             <button key={s} className={`tab${statusFilter === s ? " tab--active" : ""}`} onClick={() => setStatusFilter(s)}>{s}</button>
           ))}
@@ -107,82 +111,218 @@ const closeDetailsModal = () => setDetailsCampaign(null);
 
       <div className="card">
         {error ? <div className="alert alert--error">{error}</div> : null}
-        <div style={{ overflowX: "auto" }}>
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>الحملة</th>
-                <th>المنظمة</th>
-                <th>الحالة</th>
-                <th>التقدم</th>
-                <th>إجراءات</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? <tr><td colSpan={5}>جار تحميل الحملات...</td></tr> : null}
-              {!loading && filtered.length === 0 ? <tr><td colSpan={5}>لا توجد حملات.</td></tr> : null}
-              {!loading && filtered.map((c) => {
-                console.log(c);
-                const title = c.title ||  "-";
-                const org = Array.isArray(c.organizationNames) && c.organizationNames.length > 1 
-                  ? c.organizationNames.join("، ") 
-                  : (c.organizationName || "-");
-                const status = c.status || c.campaignStatus || "-";
-                const deleted = Boolean(c.deleted || c.isDeleted);
-                const collected = c.collected ?? c.totalRaised ?? c.currentAmount ?? 0;
-                const target = c.target ?? c.targetAmount ?? 0;
-                return (
-                <tr key={c.id} style={{ opacity: c.deleted ? 0.5 : 1 }}>
-                  <td style={{ fontWeight: 600 }}>{title}</td>
-                  <td className="muted" style={{ maxWidth: 200, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={org}>{org}</td>
-                  <td>
-                    <span className={`badge ${deleted ? "badge--red" : "badge--green"}`}>
-                      {deleted ? "محذوفة" : status}
-                    </span>
-                  </td>
-                  <td style={{ minWidth: 140 }}><ProgressBar value={collected} max={target} label /></td>
-                  <td>
-                    <div style={{ display: "flex", gap: 4 }}>
-                      <button
-    className="btn btn--ghost btn--sm"
-    style={{ padding: "4px 8px" }}
-    onClick={() => openDetailsModal(c)}
-    aria-label={`عرض تفاصيل ${title}`}
-  >
-    <FiEye size={12} />
-  </button>
-                      {deleted ? (
-                        <button className="btn btn--outline btn--sm" style={{ display: "flex", alignItems: "center", gap: 4 }} onClick={async () => { try { await restoreCampaign(c.id); await loadCampaigns(); } catch { setError("تعذر استعادة الحملة."); } }}>
-                          <FiRefreshCw size={11} /> استعادة
-                        </button>
-                      ) : (
-                        <>
-                          <select
-                            className="field-select"
-                            style={{ padding: "3px 6px", width: 100, fontSize: "0.72rem" }}
-                            value={campaignStatusLabel(status)}
-                            onChange={async (e) => { try { await updateCampaignStatus(c.id, campaignStatusValue(e.target.value)); await loadCampaigns(); } catch { setError("تعذر تحديث حالة الحملة."); } }}
-                          >
-                           <option>تُحضر</option>
-<option>نشطة</option>
-<option>مكتملة</option>
-<option>مستبعدة</option>
-<option>مؤجلة</option>
-<option>منتهية</option>
- 
-                          </select>
-                          <button className="btn btn--ghost btn--sm" style={{ padding: "4px 8px", color: "var(--error)" }} onClick={async () => { try { await deleteCampaign(c.id); await loadCampaigns(); } catch { setError("تعذر حذف الحملة."); } }}>
-                            <FiTrash2 size={12} />
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  </td>
+        
+        {/* Desktop Table View */}
+        <div className="table-desktop-view">
+          <div style={{ overflowX: "auto" }}>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>الحملة</th>
+                  <th>المنظمة</th>
+                  <th>الحالة</th>
+                  <th>التقدم</th>
+                  <th style={{ textAlign: "center" }}>إجراءات</th>
                 </tr>
-                );
-              })}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {loading ? <tr><td colSpan={5} style={{ textAlign: "center", padding: "2rem" }}>جار تحميل الحملات...</td></tr> : null}
+                {!loading && filtered.length === 0 ? <tr><td colSpan={5} style={{ textAlign: "center", padding: "2rem" }}>لا توجد حملات.</td></tr> : null}
+                {!loading && filtered.map((c) => {
+                  const title = c.title ||  "-";
+                  const org = Array.isArray(c.organizationNames) && c.organizationNames.length > 1 
+                    ? c.organizationNames.join("، ") 
+                    : (c.organizationName || "-");
+                  const status = c.status || c.campaignStatus || "-";
+                  const deleted = Boolean(c.deleted || c.isDeleted);
+                  const collected = c.collected ?? c.totalRaised ?? c.currentAmount ?? 0;
+                  const target = c.target ?? c.targetAmount ?? 0;
+                  return (
+                  <tr key={c.id} style={{ opacity: c.deleted ? 0.5 : 1 }}>
+                    <td style={{ fontWeight: 600 }}>{title}</td>
+                    <td className="muted" style={{ maxWidth: 200, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={org}>{org}</td>
+                    <td>
+                      <span className={`badge ${deleted ? "badge--red" : "badge--green"}`}>
+                        {deleted ? "محذوفة" : status}
+                      </span>
+                    </td>
+                    <td style={{ minWidth: 140 }}><ProgressBar value={collected} max={target} label /></td>
+                    <td style={{ textAlign: "center" }}>
+                      <div style={{ display: "flex", gap: 4, justifyContent: "center" }}>
+                        <button
+                          className="btn btn--ghost btn--sm"
+                          style={{ padding: "4px 8px" }}
+                          onClick={() => openDetailsModal(c)}
+                          aria-label={`عرض تفاصيل ${title}`}
+                          title="عرض التفاصيل"
+                        >
+                          <FiEye size={12} />
+                        </button>
+                        {deleted ? (
+                          <button className="btn btn--outline btn--sm" style={{ display: "flex", alignItems: "center", gap: 4 }} onClick={async () => { try { await restoreCampaign(c.id); await loadCampaigns(); } catch { setError("تعذر استعادة الحملة."); } }}>
+                            <FiRefreshCw size={11} /> استعادة
+                          </button>
+                        ) : (
+                          <>
+                            <select
+                              className="field-select"
+                              style={{ padding: "3px 6px", width: 100, fontSize: "0.72rem" }}
+                              value={campaignStatusLabel(status)}
+                              onChange={async (e) => { try { await updateCampaignStatus(c.id, campaignStatusValue(e.target.value)); await loadCampaigns(); } catch { setError("تعذر تحديث حالة الحملة."); } }}
+                            >
+                              <option>تُحضر</option>
+                              <option>نشطة</option>
+                              <option>مكتملة</option>
+                              <option>مستبعدة</option>
+                              <option>مؤجلة</option>
+                              <option>منتهية</option>
+                            </select>
+                            <button className="btn btn--ghost btn--sm" style={{ padding: "4px 8px", color: "var(--error)" }} title="حذف الحملة" onClick={async () => { try { await deleteCampaign(c.id); await loadCampaigns(); } catch { setError("تعذر حذف الحملة."); } }}>
+                              <FiTrash2 size={12} />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Mobile Cards View */}
+        <div className="cards-mobile-view">
+          {loading ? (
+            <div style={{ textAlign: "center", padding: "2rem" }} className="muted">
+              جار تحميل الحملات...
+            </div>
+          ) : filtered.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "2rem" }} className="muted">
+              لا توجد حملات مطابقة للبحث أو الفلتر.
+            </div>
+          ) : (
+            filtered.map((c) => {
+              const title = c.title || "-";
+              const org = Array.isArray(c.organizationNames) && c.organizationNames.length > 1
+                ? c.organizationNames.join("، ")
+                : (c.organizationName || "-");
+              const status = c.status || c.campaignStatus || "-";
+              const deleted = Boolean(c.deleted || c.isDeleted);
+              const collected = c.collected ?? c.totalRaised ?? c.currentAmount ?? 0;
+              const target = c.target ?? c.targetAmount ?? 0;
+              const isSolo = c.isSolo;
+
+              return (
+                <div key={c.id} className="mobile-table-card" style={{ opacity: deleted ? 0.65 : 1 }}>
+                  <div className="mobile-table-card__header">
+                    <div className="mobile-table-card__title">{title}</div>
+                    <div className="mobile-table-card__badges">
+                      <span className={`badge ${isSolo ? "badge--gray" : "badge--blue"}`}>
+                        {isSolo ? "فردية" : "مشتركة"}
+                      </span>
+                      <span className={`badge ${deleted ? "badge--red" : "badge--green"}`}>
+                        {deleted ? "محذوفة" : status}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="mobile-table-card__grid">
+                    <div>
+                      <div className="mobile-table-card__field-label">المنظمة</div>
+                      <div className="mobile-table-card__field-val" style={{ fontSize: "0.8rem", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={org}>
+                        {org}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="mobile-table-card__field-label">المعرف</div>
+                      <div className="mobile-table-card__field-val">#{c.id}</div>
+                    </div>
+                    <div>
+                      <div className="mobile-table-card__field-label">المجموع</div>
+                      <div className="mobile-table-card__field-val" style={{ color: "var(--brand-green)" }}>
+                        {collected.toLocaleString("ar-EG")} ج.م
+                      </div>
+                    </div>
+                    <div>
+                      <div className="mobile-table-card__field-label">المستهدف</div>
+                      <div className="mobile-table-card__field-val">
+                        {target.toLocaleString("ar-EG")} ج.م
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ marginTop: 4 }}>
+                    <ProgressBar value={collected} max={target} label />
+                  </div>
+
+                  {/* Actions Bar */}
+                  <div className="mobile-table-card__actions">
+                    <button
+                      className="btn btn--outline btn--sm"
+                      onClick={() => openDetailsModal(c)}
+                    >
+                      <FiEye size={13} /> تفاصيل
+                    </button>
+
+                    {deleted ? (
+                      <button
+                        className="btn btn--outline btn--sm"
+                        onClick={async () => {
+                          try {
+                            await restoreCampaign(c.id);
+                            await loadCampaigns();
+                          } catch {
+                            setError("تعذر استعادة الحملة.");
+                          }
+                        }}
+                      >
+                        <FiRefreshCw size={12} /> استعادة
+                      </button>
+                    ) : (
+                      <>
+                        <select
+                          className="field-select"
+                          value={campaignStatusLabel(status)}
+                          onChange={async (e) => {
+                            try {
+                              await updateCampaignStatus(c.id, campaignStatusValue(e.target.value));
+                              await loadCampaigns();
+                            } catch {
+                              setError("تعذر تحديث حالة الحملة.");
+                            }
+                          }}
+                        >
+                          <option>تُحضر</option>
+                          <option>نشطة</option>
+                          <option>مكتملة</option>
+                          <option>مستبعدة</option>
+                          <option>مؤجلة</option>
+                          <option>منتهية</option>
+                        </select>
+
+                        <button
+                          className="btn btn--ghost btn--sm"
+                          style={{ color: "var(--error)" }}
+                          onClick={async () => {
+                            try {
+                              await deleteCampaign(c.id);
+                              await loadCampaigns();
+                            } catch {
+                              setError("تعذر حذف الحملة.");
+                            }
+                          }}
+                        >
+                          <FiTrash2 size={13} /> حذف
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
       {detailsCampaign && (
