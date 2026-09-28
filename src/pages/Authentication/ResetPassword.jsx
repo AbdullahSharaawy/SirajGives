@@ -18,7 +18,7 @@ const schema = yup.object().shape({
     .required('كلمة المرور مطلوبة')
     .matches(
       /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])/,
-      'يجب أن تحتوي على أحرف كبيرة وصغيرة وأرقام ورموز خاصة'
+      'يجب أن تحتوي على أحرف كبيرة وصغيرة وأرقام'
     ),
   confirmPassword: yup
     .string()
@@ -64,7 +64,7 @@ const ResetPassword = () => {
       hasUpperCase: /[A-Z]/.test(password),
       hasLowerCase: /[a-z]/.test(password),
       hasNumber: /\d/.test(password),
-      hasSpecialChar: /[@$!%*?&]/.test(password),
+    
   };
 
   const invalidLink = !token || !email;
@@ -160,10 +160,7 @@ const ResetPassword = () => {
                 condition={passwordStrength.hasNumber}
                 label="رقم واحد على الأقل"
               />
-              <PasswordStrengthCheck
-                condition={passwordStrength.hasSpecialChar}
-                label="رمز خاص واحد على الأقل (@$!%*?&)"
-              />
+             
             </div>
 
             <div className="password-input-wrapper">
@@ -191,8 +188,7 @@ const ResetPassword = () => {
                 !passwordStrength.hasMinLength ||
                 !passwordStrength.hasUpperCase ||
                 !passwordStrength.hasLowerCase ||
-                !passwordStrength.hasNumber ||
-                !passwordStrength.hasSpecialChar
+                !passwordStrength.hasNumber 
               }
             >
               تعيين كلمة المرور الجديدة

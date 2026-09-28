@@ -65,7 +65,6 @@ export default function Profile() {
   const [isSavingProfile, setIsSavingProfile] = useState(false);
 
   // Password tab state
-  const [pwMode, setPwMode] = useState("direct"); // "direct" | "resetCycle"
   const [directPw, setDirectPw] = useState({ old: "", new: "", confirm: "" });
   const [showDirectPw, setShowDirectPw] = useState({ old: false, new: false, confirm: false });
   const [directPwMsg, setDirectPwMsg] = useState({ type: "", text: "" });
@@ -336,7 +335,7 @@ console.log(rolesList);
               <div className="profile-badges-row">
                 {rolesList.map((r, i) => (
                   <span key={i} className="badge badge--green">
-                    <FiShield size={10} /> {r === "SuperAdmin" ? "مدير عام" : r === "OrganizationAdmin" ? "مسؤول منظمة" : r}
+                    <FiShield size={10} /> {r === "SuperAdmin" ? "مدير عام" : r === "Admin" ? "مسؤول منظمة" : r}
                   </span>
                 ))}
                 <span className="badge badge--blue">
