@@ -172,6 +172,8 @@ const [showDeleted, setShowDeleted] = useState(false);
             type: typeCategory,
             organizationId: Number(orgId),
             deadline: deadline ? new Date(deadline).toISOString() : null,
+            isSolo:true,
+
           });
         } else {
           const partnerIds = Array.from(new Set([Number(orgId), ...selectedPartnerOrgs]));
@@ -183,6 +185,7 @@ const [showDeleted, setShowDeleted] = useState(false);
             creatorOrganizationId: Number(orgId),
             organizationIds: partnerIds,
             deadline: deadline ? new Date(deadline).toISOString() : null,
+            isSolo:false,
           });
         }
         setSuccessMsg("تم إنشاء الحملة بنجاح.");
@@ -252,10 +255,11 @@ const [showDeleted, setShowDeleted] = useState(false);
   };
 
   const filteredCampaigns = useMemo(() => {
+
     return campaigns.filter((c) => {
       const matchSearch = (c.title || "").toLowerCase().includes(search.toLowerCase()) ||
         (c.description || "").toLowerCase().includes(search.toLowerCase());
-
+      console.log(c);
       const label = campaignStatusLabel(c.status);
       const matchStatus = statusFilter === "الكل" || label === statusFilter;
 
